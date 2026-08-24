@@ -1,0 +1,81 @@
+maintainer=""
+pkgname=linux-lenovo-tb-x606f
+pkgver=7.2_rc3
+pkgrel=0
+pkgdesc="Mainline kernel for Lenovo Tab M10 FHD Plus"
+arch="aarch64"
+_carch="arm64"
+_flavor="lenovo-tb-x606f"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bison
+	findutils
+	flex
+	linux-headers
+	openssl-dev
+	perl
+	zstd
+"
+
+_config="config-$_flavor.$arch"
+_outdir=".output"
+source="
+	$pkgname-$pkgver.tar.gz::https://git.kernel.org/torvalds/t/linux-${pkgver/_/-}.tar.gz
+	0001-dt-bindings-mediatek-describe-MT6765-boot-hardware.patch
+	0002-clk-mediatek-mt6765-add-PMIC-wrapper-clock-and-reset.patch
+	0003-mmc-mtk-sd-add-MT6765-compatibility.patch
+	0004-pinctrl-mediatek-mt6765-map-virtual-PMIC-EINT.patch
+	0005-arm64-dts-mediatek-add-MT6765-SoC.patch
+	0006-arm64-dts-mediatek-add-Lenovo-Tab-M10-FHD-Plus.patch
+	$_config
+"
+builddir="$srcdir/linux-${pkgver/_/-}"
+
+prepare() {
+	default_prepare
+	mkdir -p "$_outdir"
+	cp "$srcdir/$_config" "$_outdir/.config"
+	make O="$_outdir" ARCH="$_carch" olddefconfig
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1))-$_flavor" \
+		Image.gz \
+		mediatek/mt8768-lenovo-tb-x606f.dtb \
+		modules
+}
+
+package() {
+	local buildroot="$builddir/$_outdir"
+	local dtbdir="$buildroot/arch/arm64/boot/dts/mediatek"
+
+	install -Dm644 "$buildroot/arch/arm64/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz-$_flavor"
+	install -Dm644 "$dtbdir/mt8768-lenovo-tb-x606f.dtb" \
+		"$pkgdir/boot/dtbs/mediatek/mt8768-lenovo-tb-x606f.dtb"
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		INSTALL_MOD_PATH="$pkgdir/usr" \
+		INSTALL_MOD_STRIP=1 \
+		modules_install
+	rm -f "$pkgdir"/usr/lib/modules/*/build \
+		"$pkgdir"/usr/lib/modules/*/source
+
+	install -D "$buildroot/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+
+sha512sums="
+3a065b9006efbf42aca12defd9206496581964a7e841f77564d2bf2bea40b0908cca75e00eb229ff9a7405b8da28ac7590f9d2e95d7f2d235120bc7220df4355  linux-lenovo-tb-x606f-7.2_rc3.tar.gz
+84583900b76cee56421d79894c0d78a98597e12147478f17a153d40428bb5bd1fa25db76b848b39ad1136adfe79bc72c80aebc103331532c74ca9fed7bd0d421  0001-dt-bindings-mediatek-describe-MT6765-boot-hardware.patch
+8d6907f3c2d09b100b75099cfbf32ff325b3d0c21ba86aadb6fb56cccded1cbee78433154faebbbdfd65549f690034df729196ebdfde5c7e8587af164ca7cfa1  0002-clk-mediatek-mt6765-add-PMIC-wrapper-clock-and-reset.patch
+332a3d96a232a103940d07374e9ea1fe859f993b383edd19e0751a82ac7b161eef434dd657ff55f2d088bcfc1286eba79b94750eddf1525d3ad074024b9b9ac1  0003-mmc-mtk-sd-add-MT6765-compatibility.patch
+b5fe83fb259915835cc526f7024386e71fe6ee26d1d8549d182c238e1cbec3dfa509b59fc6c89e2c42cf8cbf9bb97990ab8eb57ed3d323d5ecd3698533879b8d  0004-pinctrl-mediatek-mt6765-map-virtual-PMIC-EINT.patch
+9b87e56aca146a499d4c35fa3a70296eefadacce8b1336311e28ba7d7bddacf1fb31d679e63b99f2a8c05fc7f8ef5e6d9b9f4262a7e0e5db028ba4ea5caeb2c5  0005-arm64-dts-mediatek-add-MT6765-SoC.patch
+89768b5533db6ca1cc795c76ac249e4cb1d2928d74a990a7577dd51d95e7ad00afa403b3b516a0d5f0784dbb0d03f7929d8ca236761a6b8fc4f4bbcf45a967ba  0006-arm64-dts-mediatek-add-Lenovo-Tab-M10-FHD-Plus.patch
+a4fdb05a91696dc38ebf302ba6810701cd901884567b41f304e53a99ddfe7ec697ca86f65d11f1ca0b98d81b9bc5919349905c3a8a3345bd7245551659c4baac  config-lenovo-tb-x606f.aarch64
+"
