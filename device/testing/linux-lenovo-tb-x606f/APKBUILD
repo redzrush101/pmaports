@@ -12,11 +12,14 @@ options="!strip !check !tracedeps pmb:cross-native"
 makedepends="
 	bash
 	bison
+	elfutils-dev
 	findutils
 	flex
 	linux-headers
 	openssl-dev
+	pahole
 	perl
+	python3
 	zstd
 "
 
@@ -77,5 +80,5 @@ sha512sums="
 b5fe83fb259915835cc526f7024386e71fe6ee26d1d8549d182c238e1cbec3dfa509b59fc6c89e2c42cf8cbf9bb97990ab8eb57ed3d323d5ecd3698533879b8d  0004-pinctrl-mediatek-mt6765-map-virtual-PMIC-EINT.patch
 9b87e56aca146a499d4c35fa3a70296eefadacce8b1336311e28ba7d7bddacf1fb31d679e63b99f2a8c05fc7f8ef5e6d9b9f4262a7e0e5db028ba4ea5caeb2c5  0005-arm64-dts-mediatek-add-MT6765-SoC.patch
 89768b5533db6ca1cc795c76ac249e4cb1d2928d74a990a7577dd51d95e7ad00afa403b3b516a0d5f0784dbb0d03f7929d8ca236761a6b8fc4f4bbcf45a967ba  0006-arm64-dts-mediatek-add-Lenovo-Tab-M10-FHD-Plus.patch
-a4fdb05a91696dc38ebf302ba6810701cd901884567b41f304e53a99ddfe7ec697ca86f65d11f1ca0b98d81b9bc5919349905c3a8a3345bd7245551659c4baac  config-lenovo-tb-x606f.aarch64
+1dd1e3a775f1cb0f7640e5d9f435fd71c00c6f4540be1285d302b2ee15b7cc1ac4fc356ea70cdb86ab55dd4f1c9533bd7dbd3e88675872c9d53519f54349bc6d  config-lenovo-tb-x606f.aarch64
 "
