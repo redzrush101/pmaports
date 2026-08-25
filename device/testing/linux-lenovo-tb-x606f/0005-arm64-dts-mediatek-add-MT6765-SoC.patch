@@ -1,7 +1,7 @@
 From fe12e7b200add238545a1d6301a441105cf4b677 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:09 +0200
-Subject: [PATCH 5/6] arm64: dts: mediatek: add MT6765 SoC
+Subject: [PATCH 5/9] arm64: dts: mediatek: add MT6765 SoC
 
 Describe the CPUs and the minimum set of proven peripherals required
 to boot from eMMC and provide USB peripheral mode: interrupt

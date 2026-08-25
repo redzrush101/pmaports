@@ -1,0 +1,25 @@
+From 70d09b5843f08413d8a3aadf88d069aae6ad87b6 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 25 Aug 2026 15:32:26 +0200
+Subject: [PATCH 9/9] arm64: dts: mediatek: use the MT6765 watchdog compatible
+
+Select the MT6765-specific TOPRGU restart sequence while retaining the
+generic MT6589 watchdog compatible as a fallback.
+---
+ arch/arm64/boot/dts/mediatek/mt6765.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+index a26557c90..f940322d8 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6765.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+@@ -154,7 +154,8 @@ pio: pinctrl@10005000 {
+ 		};
+ 
+ 		watchdog: watchdog@10007000 {
+-			compatible = "mediatek,mt6589-wdt";
++			compatible = "mediatek,mt6765-wdt",
++				     "mediatek,mt6589-wdt";
+ 			reg = <0 0x10007000 0 0x100>;
+ 		};
+ 

@@ -1,7 +1,7 @@
 From 8140146d56ba5833b2e45db3cafe6737bf1ec4b4 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:09 +0200
-Subject: [PATCH 6/6] arm64: dts: mediatek: add Lenovo Tab M10 FHD Plus
+Subject: [PATCH 6/9] arm64: dts: mediatek: add Lenovo Tab M10 FHD Plus
 
 Add the Lenovo TB-X606F (achilles6_row_wifi), with its verified 4 GiB
 memory map, persistent RAM regions, eMMC wiring, MT6357 interrupt and

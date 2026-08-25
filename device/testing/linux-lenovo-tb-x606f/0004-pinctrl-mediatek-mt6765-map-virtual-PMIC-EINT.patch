@@ -1,7 +1,7 @@
 From d06322e89ef2fa735088b6eeaca86daefe3f4be5 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:09 +0200
-Subject: [PATCH 4/6] pinctrl: mediatek: mt6765: map virtual PMIC EINT
+Subject: [PATCH 4/9] pinctrl: mediatek: mt6765: map virtual PMIC EINT
 
 Add the virtual pin used to route EINT 144 from the pin controller to
 the PMIC. MT6765 has 180 physical GPIOs; this descriptor is

@@ -1,7 +1,7 @@
 From faef85253e3770b59cac6ec0a7326ce64f66e383 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:09 +0200
-Subject: [PATCH 3/6] mmc: mtk-sd: add MT6765 compatibility
+Subject: [PATCH 3/9] mmc: mtk-sd: add MT6765 compatibility
 
 MT6765 uses the same controller capabilities as MT6779, including the
 12-bit divider, asynchronous FIFO and enhanced receive path.

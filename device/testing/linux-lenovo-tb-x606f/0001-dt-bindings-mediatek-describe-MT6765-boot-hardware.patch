@@ -1,7 +1,7 @@
 From 8969e907bc7c9d4be684f0ddcdcf714ef23587c5 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:08 +0200
-Subject: [PATCH 1/6] dt-bindings: mediatek: describe MT6765 boot hardware
+Subject: [PATCH 1/9] dt-bindings: mediatek: describe MT6765 boot hardware
 
 Describe the MT6765 peripherals needed to boot from eMMC and provide
 USB device mode, including pinctrl and infracfg reset support. Add the

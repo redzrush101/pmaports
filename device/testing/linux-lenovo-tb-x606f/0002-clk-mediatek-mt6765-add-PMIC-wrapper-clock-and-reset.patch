@@ -1,7 +1,7 @@
 From b8f95abfa0b03d7668a25125626f66b51183e57c Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 24 Aug 2026 16:03:08 +0200
-Subject: [PATCH 2/6] clk: mediatek: mt6765: add PMIC wrapper clock and reset
+Subject: [PATCH 2/9] clk: mediatek: mt6765: add PMIC wrapper clock and reset
 
 Expose the PMIC wrapper gate and its infracfg reset line. The set and
 clear registers are at 0x140 and 0x144 respectively, with the wrapper
