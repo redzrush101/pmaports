@@ -1,0 +1,89 @@
+maintainer="Yassin <yassin@users.noreply.github.com>"
+pkgname=linux-samsung-r8s
+pkgver=7.2_git20260828
+pkgrel=0
+_commit="c20313e98b04ce543936431b6122dd639d3a8346"
+pkgdesc="Mainline kernel for Samsung Galaxy S20 FE 4G"
+arch="aarch64"
+_carch="arm64"
+_flavor="samsung-r8s"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	clang
+	elfutils-dev
+	findutils
+	flex
+	kmod
+	linux-headers
+	lld
+	llvm
+	openssl-dev
+	pahole
+	perl
+	postmarketos-installkernel
+	python3
+	zstd
+"
+
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/torvalds/linux/archive/$_commit.tar.gz
+	0001-dt-bindings-ufs-samsung-Add-Exynos990-support.patch
+	0002-phy-samsung-ufs-Add-Exynos990-support.patch
+	0003-ufs-host-exynos-Add-Exynos990-support.patch
+	0004-arm64-dts-exynos-Add-UFS-to-Exynos990.patch
+	0005-arm64-dts-exynos-Enable-UFS-on-r8s.patch
+	0006-arm64-dts-exynos-Add-ramoops-to-r8s.patch
+	config-samsung-r8s.aarch64
+"
+builddir="$srcdir/linux-$_commit"
+
+prepare() {
+	default_prepare
+
+	make ARCH="$_carch" LLVM=1 defconfig
+	scripts/kconfig/merge_config.sh -m .config \
+		"$srcdir/config-samsung-r8s.$CARCH"
+	make ARCH="$_carch" LLVM=1 olddefconfig
+}
+
+build() {
+	unset LDFLAGS
+	make ARCH="$_carch" LLVM=1 \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1))-postmarketOS" \
+		Image.gz modules exynos/exynos990-r8s.dtb
+}
+
+package() {
+	make modules_install \
+		ARCH="$_carch" \
+		LLVM=1 \
+		INSTALL_MOD_PATH="$pkgdir/usr" \
+		INSTALL_MOD_STRIP=1
+
+	install -Dm644 "$builddir/arch/$_carch/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz"
+	install -Dm644 \
+		"$builddir/arch/$_carch/boot/dts/exynos/exynos990-r8s.dtb" \
+		"$pkgdir/boot/dtbs/exynos/exynos990-r8s.dtb"
+	install -Dm644 "$builddir/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+
+	rm -f "$pkgdir"/usr/lib/modules/*/build \
+		"$pkgdir"/usr/lib/modules/*/source
+}
+
+sha512sums="
+f3fe29a31bd3d6a97430871944c13af48f3977acb2394eab655fd20daea3d33e47d9505a4e7398c9539bd47b44359669676462674faede0ddd8782b5b4610011  linux-samsung-r8s-c20313e98b04ce543936431b6122dd639d3a8346.tar.gz
+8f2881681b0a216dcb819e05cdea7b73e7b65a065014d91a5efec339b2cf81659e02a1a864b32f65b5309bbaf041903a65f2a6bd4d83485c011aa9c7d9669dcb  0001-dt-bindings-ufs-samsung-Add-Exynos990-support.patch
+df098b6eb47a057a13ccaf8b556933c9e1e920ab19e0217d04c6f6296b946b8016711cc0c7d4341e6ce341ddd2474757c06ecb0d6257dc7830f8fa7473bf2535  0002-phy-samsung-ufs-Add-Exynos990-support.patch
+90548832fd8dda654482c7ba8ffa1e3c1a2520cc019d5fc783c13760790f0a63dc9ca772c4906e6f071e30709973be7f0839052527684ee34e916f9186295496  0003-ufs-host-exynos-Add-Exynos990-support.patch
+981963239916ef3dc9b060b6ba9374a6ffa8ec9e14a949a567aa481ce55d770ca06e5ba12c085f13c3adcb3efddbc6cd501e071059783822697f96a70be77c77  0004-arm64-dts-exynos-Add-UFS-to-Exynos990.patch
+82f4b8deaa63b5250c2b782cc8c6f3ec5844b1743e30a21d9b8942e87a7ad2d6f02764da52614e3e19f79bbfe9c21e62679e4433d24248d265d949b73ad344a4  0005-arm64-dts-exynos-Enable-UFS-on-r8s.patch
+68c6cb0c210c1751087875661253fdbaec8f3c59b0d2eba7eb248d6f70156815524363f20c36e2cd2f69a4da82a247e43967c9257d5d0a6129e1764c08662c1c  0006-arm64-dts-exynos-Add-ramoops-to-r8s.patch
+eb2994da17fa88f57d0b0d0cfdfcc846aedb5442e1e4f7a38d180276de179c567b61dd074318d1873c86f4fee3b5d6f88113dd5a1a91df5faed9ec221aa66f90  config-samsung-r8s.aarch64
+"

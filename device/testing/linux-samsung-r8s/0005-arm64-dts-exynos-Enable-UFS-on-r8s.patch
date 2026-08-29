@@ -1,0 +1,46 @@
+From 43cfeb59329ff14f5cb181870a8e2ce64b71226e Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 19:55:54 +0200
+Subject: [PATCH 5/6] arm64: dts: exynos: Enable UFS on r8s
+
+The embedded UFS supply on r8s is enabled by GPG1-0. Describe that
+fixed supply and enable the Exynos990 UFS host and PHY so the internal
+storage can be enumerated.
+
+Signed-off-by: Yassin <yassin@users.noreply.github.com>
+---
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+index 563dbde6abc7..464a7f076f64 100644
+--- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
++++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+@@ -50,6 +50,13 @@ reg_dummy: regulator-0 {
+ 		regulator-name = "dummy_reg";
+ 	};
+ 
++	ufs_vcc_reg: regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "ufs-vcc";
++		gpio = <&gpg1 0 GPIO_ACTIVE_HIGH>;
++		regulator-boot-on;
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -130,3 +137,13 @@ &usbdrd {
+ &usbdrd_phy {
+ 	status = "okay";
+ };
++
++&ufs_0 {
++	vcc-supply = <&ufs_vcc_reg>;
++
++	status = "okay";
++};
++
++&ufs_0_phy {
++	status = "okay";
++};

@@ -1,0 +1,32 @@
+maintainer="Yassin <yassin@users.noreply.github.com>"
+pkgname=device-samsung-r8s
+pkgdesc="Samsung Galaxy S20 FE 4G"
+pkgver=1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	android-tools-mkbootimg
+	linux-samsung-r8s
+	postmarketos-base
+"
+makedepends="devicepkg-dev"
+source="
+	deviceinfo
+	kernel-cmdline.conf
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+sha512sums="
+8e2e3dd5fdeedc3297958b1c4da6e179ebb7109cb94633ae95abd413026d2a45be2f032d90a074539f5a112032315899d90d46958be4952c83a19809496e3340  deviceinfo
+c80c793b4780904d1d496ce996b831f70aa1b05f6c88646330ed710fff82fd45a70289426712f1af7170ec3187aa2ed22d0faa05116297db5ada7231c553e633  kernel-cmdline.conf
+"
