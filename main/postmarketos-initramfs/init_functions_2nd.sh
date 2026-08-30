@@ -37,8 +37,7 @@ setup_udev() {
 	# - https://git.alpinelinux.org/aports/tree/main/eudev/setup-udev
 	# - https://git.alpinelinux.org/aports/tree/main/udev-init-scripts/APKBUILD
 	udevd -d --resolve-names=never
-	udevadm trigger --type=devices --action=add
-	udevadm settle
+	info "Skipping initramfs udev coldplug replay for diagnostics"
 }
 
 # parted is too big
