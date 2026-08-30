@@ -1,4 +1,4 @@
-From 43cfeb59329ff14f5cb181870a8e2ce64b71226e Mon Sep 17 00:00:00 2001
+From 7d39d80e9f5172be6dfee33645d96df75fbcd798 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@users.noreply.github.com>
 Date: Sat, 29 Aug 2026 19:55:54 +0200
 Subject: [PATCH 5/6] arm64: dts: exynos: Enable UFS on r8s
@@ -9,14 +9,14 @@ storage can be enumerated.
 
 Signed-off-by: Yassin <yassin@users.noreply.github.com>
 ---
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-index 563dbde6abc7..464a7f076f64 100644
+index 563dbde6abc7..bfb6fabd459c 100644
 --- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
 +++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-@@ -50,6 +50,13 @@ reg_dummy: regulator-0 {
+@@ -50,6 +50,14 @@ reg_dummy: regulator-0 {
  		regulator-name = "dummy_reg";
  	};
  
@@ -24,13 +24,14 @@ index 563dbde6abc7..464a7f076f64 100644
 +		compatible = "regulator-fixed";
 +		regulator-name = "ufs-vcc";
 +		gpio = <&gpg1 0 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
 +		regulator-boot-on;
 +	};
 +
  	reserved-memory {
  		#address-cells = <2>;
  		#size-cells = <2>;
-@@ -130,3 +137,13 @@ &usbdrd {
+@@ -130,3 +138,13 @@ &usbdrd {
  &usbdrd_phy {
  	status = "okay";
  };

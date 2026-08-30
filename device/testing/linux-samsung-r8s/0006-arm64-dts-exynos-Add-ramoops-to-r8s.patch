@@ -1,4 +1,4 @@
-From 37d92877ab7519ed3a0a92e0f4796da2ba772170 Mon Sep 17 00:00:00 2001
+From 6c4cb674958974f1736287ff517a888639efb999 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@users.noreply.github.com>
 Date: Sat, 29 Aug 2026 19:55:55 +0200
 Subject: [PATCH 6/6] arm64: dts: exynos: Add ramoops to r8s
@@ -13,10 +13,10 @@ Signed-off-by: Yassin <yassin@users.noreply.github.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-index 464a7f076f64..d5b3e027c684 100644
+index bfb6fabd459c..e0f2d88cf884 100644
 --- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
 +++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-@@ -62,6 +62,13 @@ reserved-memory {
+@@ -63,6 +63,13 @@ reserved-memory {
  		#size-cells = <2>;
  		ranges;
  
