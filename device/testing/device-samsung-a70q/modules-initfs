@@ -1,0 +1,6 @@
+libcomposite
+phy-qcom-qmp-ufs
+phy-qcom-qusb2
+ufs-qcom
+usb_f_ecm
+usb_f_rndis
