@@ -1,0 +1,54 @@
+From 6ddfe3b8554807fe63c550ca6a271ce69e448853 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Wed, 9 Sep 2026 23:07:01 +0200
+Subject: [PATCH 26/37] dt-bindings: remoteproc: qcom: describe QCS615 ADSP
+ power domain
+
+The QCS615 ADSP is powered by the low-power island CX rail.
+
+Describe its single LCX domain so validation catches wrong wiring.
+
+Exclude its SM8150 fallback compatible from the existing CX rule.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../bindings/remoteproc/qcom,sm8150-pas.yaml  | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
+index 5a7c5f8c9..317c9d643 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
+@@ -96,6 +96,20 @@ required:
+ 
+ allOf:
+   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,qcs615-adsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: LCX power domain
++        power-domain-names:
++          items:
++            - const: lcx
++
+   - if:
+       properties:
+         compatible:
+@@ -133,6 +147,11 @@ allOf:
+               - qcom,sm8150-adsp-pas
+               - qcom,sm8150-cdsp-pas
+               - qcom,sm8250-cdsp-pas
++      not:
++        properties:
++          compatible:
++            contains:
++              const: qcom,qcs615-adsp-pas
+     then:
+       properties:
+         power-domains:

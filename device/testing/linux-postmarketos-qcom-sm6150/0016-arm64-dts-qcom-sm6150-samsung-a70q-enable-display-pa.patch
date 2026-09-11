@@ -1,0 +1,142 @@
+From 88bd06ae757f9650293012c4c97f921b1d77ca4e Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 8 Sep 2026 17:49:33 +0200
+Subject: [PATCH 16/37] arm64: dts: qcom: sm6150-samsung-a70q: enable display
+ panel
+
+Describe the MDSS, DSI host, DSI PHY and AMS670TA01 panel connections
+on the Galaxy A70, including the downstream-derived timings, reset
+sequence and regulator assignments.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 83 ++++++++++++++++++-
+ 1 file changed, 80 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 8e092921d..be0353b40 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -252,12 +252,26 @@ vreg_l12a_1p8: ldo12 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
++		vreg_l13a_1p8: ldo13 {
++			regulator-name = "vreg_l13a_1p8";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1900000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
+ 		vreg_l17a_3p0: ldo17 {
+ 			regulator-name = "vreg_l17a_3p0";
+ 			regulator-min-microvolt = <3000000>;
+ 			regulator-max-microvolt = <3230000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
++
++		vreg_l18a_3p0: ldo18 {
++			regulator-name = "vreg_l18a_3p0";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
+ 	};
+ 
+ 	regulators-1 {
+@@ -286,9 +300,8 @@ &aggre1_noc {
+ 	/delete-property/ clocks;
+ };
+ 
+-/* Keep the bootloader-configured display running for simple-framebuffer. */
+ &dispcc {
+-	status = "disabled";
++	status = "okay";
+ };
+ 
+ &gpi_dma0 {
+@@ -313,11 +326,62 @@ touchscreen@50 {
+ 	};
+ };
+ 
++&mdss {
++	status = "okay";
++};
++
++&mdss_dsi0 {
++	vdda-supply = <&vreg_l3c_1p2>;
++	status = "okay";
++
++	panel@0 {
++		compatible = "samsung,s6e3fc2x01-ams670ta01",
++			     "samsung,s6e3fc2x01";
++		reg = <0>;
++
++		enable-gpios = <&pm6150_gpios 6 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
++		te-gpios = <&tlmm 90 GPIO_ACTIVE_HIGH>;
++
++		vddio-supply = <&vreg_l13a_1p8>;
++		vci-supply = <&vreg_l18a_3p0>;
++
++		pinctrl-0 = <&panel_enable_default>, <&panel_reset_default>,
++			    <&panel_te_default>;
++		pinctrl-names = "default";
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&mdss_dsi0_out>;
++			};
++		};
++	};
++};
++
++&mdss_dsi0_out {
++	data-lanes = <0 1 2 3>;
++	remote-endpoint = <&panel_in>;
++};
++
++&mdss_dsi0_phy {
++	vdda-supply = <&vreg_l4a_0p88>;
++	status = "okay";
++};
++
+ &pm6150_resin {
+ 	linux,code = <KEY_VOLUMEDOWN>;
+ 	status = "okay";
+ };
+ 
++&pm6150_gpios {
++	panel_enable_default: panel-enable-default-state {
++		pins = "gpio6";
++		function = "normal";
++		power-source = <0>;
++		bias-disable;
++	};
++};
++
+ &qupv3_id_0 {
+ 	status = "okay";
+ };
+@@ -338,7 +402,20 @@ tsp_int_default: tsp-int-state {
+ 		function = "gpio";
+ 		drive-strength = <2>;
+ 		bias-disable;
+-		input-enable;
++	};
++
++	panel_reset_default: panel-reset-default-state {
++		pins = "gpio91";
++		function = "gpio";
++		drive-strength = <8>;
++		bias-disable;
++	};
++
++	panel_te_default: panel-te-default-state {
++		pins = "gpio90";
++		function = "mdp_vsync";
++		drive-strength = <2>;
++		bias-pull-down;
+ 	};
+ };
+ 

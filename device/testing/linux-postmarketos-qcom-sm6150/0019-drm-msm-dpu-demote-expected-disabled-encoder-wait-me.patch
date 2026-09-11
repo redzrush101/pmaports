@@ -1,0 +1,32 @@
+From 6038ed59965faeda88f6cb95e7e299f105638151 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 8 Sep 2026 17:33:58 +0200
+Subject: [PATCH 19/37] drm/msm/dpu: demote expected disabled encoder wait
+ message
+
+Waiting for an interrupt is unnecessary once the physical encoder is
+disabled and callers explicitly tolerate -EWOULDBLOCK. Report that
+expected state at debug level while retaining errors for real failures.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 1f20695f8..40838e76f 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -474,9 +474,9 @@ int dpu_encoder_helper_wait_for_irq(struct dpu_encoder_phys *phys_enc,
+ 
+ 	/* return EWOULDBLOCK since we know the wait isn't necessary */
+ 	if (phys_enc->enable_state == DPU_ENC_DISABLED) {
+-		DRM_ERROR("encoder is disabled id=%u, callback=%ps, IRQ=[%d, %d]\n",
+-			  DRMID(phys_enc->parent), func,
+-			  DPU_IRQ_REG(irq_idx), DPU_IRQ_BIT(irq_idx));
++		DRM_DEBUG_KMS("encoder disabled id=%u, callback=%ps, IRQ=[%d, %d]\n",
++			      DRMID(phys_enc->parent), func,
++			      DPU_IRQ_REG(irq_idx), DPU_IRQ_BIT(irq_idx));
+ 		return -EWOULDBLOCK;
+ 	}
+ 

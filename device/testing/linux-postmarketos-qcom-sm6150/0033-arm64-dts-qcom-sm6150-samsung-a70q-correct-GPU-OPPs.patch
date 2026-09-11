@@ -1,0 +1,68 @@
+From ed323c646f2d7d173ef0101aa17a84422d0db26b Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Thu, 10 Sep 2026 18:35:43 +0200
+Subject: [PATCH 33/37] arm64: dts: qcom: sm6150-samsung-a70q: correct GPU OPPs
+
+The generic QCS615 table allows the GPU to run at 845 MHz, while the
+downstream kernel selects speed bin 156 on the Galaxy A70. Its five active
+power levels are 745, 700, 550, 435 and 290 MHz.
+
+Replace the inherited table with those frequencies and the matching RPMh
+performance levels and memory bandwidth votes reported by the downstream
+device tree.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index e96bc7485..6495e88a5 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -234,6 +234,45 @@ opp-2016000000 {
+ 	};
+ };
+ 
++/* Match the speed bin and bus levels selected by the Samsung firmware. */
++&gpu_opp_table {
++	/delete-node/ opp-845000000;
++	/delete-node/ opp-745000000;
++	/delete-node/ opp-650000000;
++	/delete-node/ opp-500000000;
++	/delete-node/ opp-435000000;
++
++	opp-290000000 {
++		opp-hz = /bits/ 64 <290000000>;
++		required-opps = <&rpmhpd_opp_low_svs>;
++		opp-peak-kBps = <1804000>;
++	};
++
++	opp-435000000 {
++		opp-hz = /bits/ 64 <435000000>;
++		required-opps = <&rpmhpd_opp_svs>;
++		opp-peak-kBps = <3000000>;
++	};
++
++	opp-550000000 {
++		opp-hz = /bits/ 64 <550000000>;
++		required-opps = <&rpmhpd_opp_svs_l1>;
++		opp-peak-kBps = <3975000>;
++	};
++
++	opp-700000000 {
++		opp-hz = /bits/ 64 <700000000>;
++		required-opps = <&rpmhpd_opp_nom>;
++		opp-peak-kBps = <5287500>;
++	};
++
++	opp-745000000 {
++		opp-hz = /bits/ 64 <745000000>;
++		required-opps = <&rpmhpd_opp_nom_l1>;
++		opp-peak-kBps = <7050000>;
++	};
++};
++
+ /*
+  * The Samsung firmware requires platform-specific preparation before CPU
+  * power collapse.  Keep the architectural WFI idle state until that support

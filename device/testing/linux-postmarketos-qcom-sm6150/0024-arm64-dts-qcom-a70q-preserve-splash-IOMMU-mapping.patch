@@ -1,0 +1,41 @@
+From 1bfcaf4d6e94ed0f2df0e65d9146f1034860b96d Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Wed, 9 Sep 2026 19:28:51 +0200
+Subject: [PATCH 24/37] arm64: dts: qcom: a70q: preserve splash IOMMU mapping
+
+Samsung's bootloader leaves MDSS scanning out the continuous-splash
+buffer at physical address 0x9c000000. Attaching the display SMMU to
+its default translated domain before native DRM takeover otherwise faults
+on that address and can leave DSI in a persistent MDP FIFO-underflow
+state.
+
+Associate the reserved framebuffer with MDSS and describe its identity
+IOVA mapping. This keeps the inherited scanout valid until the DRM driver
+replaces it.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 525e55c94..0c78264aa 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -137,6 +137,7 @@ pil_gpu_mem: pil-gpu@9a915000 {
+ 
+ 		cont_splash_mem: framebuffer@9c000000 {
+ 			reg = <0x0 0x9c000000 0x0 0xf00000>;
++			iommu-addresses = <&mdss 0x0 0x9c000000 0x0 0xf00000>;
+ 			no-map;
+ 		};
+ 
+@@ -351,6 +352,8 @@ touchscreen@50 {
+ };
+ 
+ &mdss {
++	memory-region = <&cont_splash_mem>;
++
+ 	status = "okay";
+ };
+ 

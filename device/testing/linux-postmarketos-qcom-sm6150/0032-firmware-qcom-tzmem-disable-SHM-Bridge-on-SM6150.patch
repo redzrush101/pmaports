@@ -1,0 +1,29 @@
+From a174e3f69b5dd1ab64a6345741ea2f588e1139c7 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Thu, 10 Sep 2026 17:24:47 +0200
+Subject: [PATCH 32/37] firmware: qcom: tzmem: disable SHM Bridge on SM6150
+
+Samsung SM6150 secure firmware reports SHM Bridge support, but its
+ADSP PAS init-image request subsequently fails with -EINVAL. The working
+downstream kernel does not enable SHM Bridge.
+
+Use the generic TZ memory backend on SM6150, as is already required on
+the related SDM670 and SM7150 platforms.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/firmware/qcom/qcom_tzmem.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+index f926c1f64..c6ab77d8b 100644
+--- a/drivers/firmware/qcom/qcom_tzmem.c
++++ b/drivers/firmware/qcom/qcom_tzmem.c
+@@ -82,6 +82,7 @@ static const char *const qcom_tzmem_blacklist[] = {
+ 	"qcom,sc8180x",
+ 	"qcom,sdm670", /* failure in GPU firmware loading */
+ 	"qcom,sdm845", /* reset in rmtfs memory assignment */
++	"qcom,sm6150", /* failure in ADSP firmware loading */
+ 	"qcom,sm7150", /* reset in rmtfs memory assignment */
+ 	"qcom,sm8150", /* reset in rmtfs memory assignment */
+ 	NULL

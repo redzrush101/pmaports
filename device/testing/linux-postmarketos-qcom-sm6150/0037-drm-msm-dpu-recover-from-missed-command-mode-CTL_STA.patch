@@ -1,0 +1,68 @@
+From f576d02b597443654625a1ebd83363ee67b5db6c Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Thu, 10 Sep 2026 23:33:10 +0200
+Subject: [PATCH 37/37] drm/msm/dpu: recover from missed command-mode CTL_START
+ IRQ
+
+Command-mode kickoffs increment both the CTL_START and pingpong pending
+counters. If a CTL_START interrupt is lost, its counter remains offset even
+after the frame completes. Every following commit then waits for a counter
+which can no longer reach zero and reports a timeout, despite the panel
+continuing to update.
+
+Treat pingpong completion as proof that CTL_START completed and retire one
+pending CTL_START there. On a CTL_START timeout, also inspect the hardware
+start bit. Accept a cleared bit as a missed interrupt and retire the stale
+count. Preserve the error when hardware still reports a pending start.
+
+This follows the recovery used by the downstream Qualcomm SDE command-mode
+encoder and prevents one lost interrupt from poisoning all later atomic
+commits.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c  | 24 +++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+index 45079ee59..ed3bf8363 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+@@ -95,6 +95,15 @@ static void dpu_encoder_phys_cmd_pp_tx_done_irq(void *arg)
+ 		return;
+ 
+ 	DPU_ATRACE_BEGIN("pp_done_irq");
++
++	/*
++	 * CTL_START can occasionally be missed.  Since a pingpong completion
++	 * proves that the corresponding kickoff was accepted, retire one stale
++	 * CTL_START count here as well.
++	 */
++	if (dpu_encoder_phys_cmd_is_master(phys_enc))
++		atomic_add_unless(&phys_enc->pending_ctlstart_cnt, -1, 0);
++
+ 	/* notify all synchronous clients first, then asynchronous clients */
+ 	dpu_encoder_frame_done_callback(phys_enc->parent, phys_enc, event);
+ 
+@@ -657,8 +666,19 @@ static int _dpu_encoder_phys_cmd_wait_for_ctl_start(
+ 			dpu_encoder_phys_cmd_ctl_start_irq,
+ 			&wait_info);
+ 	if (ret == -ETIMEDOUT) {
+-		DPU_ERROR_CMDENC(cmd_enc, "ctl start interrupt wait failed\n");
+-		ret = -EINVAL;
++		/*
++		 * CTL_START is cleared by hardware once the kickoff is accepted.
++		 * Recover a missed interrupt without leaving the pending counter
++		 * permanently offset for every following commit.
++		 */
++		atomic_add_unless(&phys_enc->pending_ctlstart_cnt, -1, 0);
++		if (!phys_enc->hw_ctl->ops.is_started(phys_enc->hw_ctl)) {
++			ret = 0;
++		} else {
++			DPU_ERROR_CMDENC(cmd_enc,
++					 "ctl start interrupt wait failed\n");
++			ret = -EINVAL;
++		}
+ 	} else if (!ret)
+ 		ret = 0;
+ 

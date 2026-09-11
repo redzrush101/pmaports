@@ -1,0 +1,110 @@
+From b49dcb0f50dc5d080a24512eb2fd9633025f68bf Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 7 Sep 2026 18:47:30 +0200
+Subject: [PATCH 09/37] arm64: dts: qcom: sm6150-samsung-a70q: enable
+ touchscreen
+
+The Galaxy A70 uses an Imagis IST4050 touchscreen on QUP0 I2C1.
+Enable the QUP wrapper, its GPI DMA engine and I2C1, then describe
+the controller at address 0x50.
+
+The controller interrupt is connected to GPIO89. GPIO93 enables the
+combined 3.0 V touchscreen supply; model it as a fixed regulator and
+use it for both supplies exposed by the controller binding. Run I2C1
+at the downstream-observed 400 kHz bus rate.
+
+These connections, the bus rate and the 1080 by 2400 coordinate range
+are taken from the downstream kernel and verified against the running
+Android device tree and debugfs state.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 46c294d72..8e092921d 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -3,6 +3,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ #include "talos.dtsi"
+ #include "pm6150.dtsi"
+@@ -52,6 +53,17 @@ xo_board_clk: xo-board-clk {
+ 		};
+ 	};
+ 
++	tsp_vdd: regulator-tsp-vdd {
++		compatible = "regulator-fixed";
++		regulator-name = "tsp-vdd";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3000000>;
++		gpio = <&tlmm 93 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-0 = <&tsp_en_default>;
++		pinctrl-names = "default";
++	};
++
+ 	reserved-memory {
+ 		kaslr_mem: kaslr@80001000 {
+ 			reg = <0x0 0x80001000 0x0 0x1000>;
+@@ -279,14 +291,55 @@ &dispcc {
+ 	status = "disabled";
+ };
+ 
++&gpi_dma0 {
++	status = "okay";
++};
++
++&i2c1 {
++	clock-frequency = <400000>;
++	status = "okay";
++
++	touchscreen@50 {
++		compatible = "imagis,ist4050";
++		reg = <0x50>;
++		interrupt-parent = <&tlmm>;
++		interrupts = <89 IRQ_TYPE_EDGE_FALLING>;
++		vdd-supply = <&tsp_vdd>;
++		vddio-supply = <&tsp_vdd>;
++		pinctrl-0 = <&tsp_int_default>;
++		pinctrl-names = "default";
++		touchscreen-size-x = <1080>;
++		touchscreen-size-y = <2400>;
++	};
++};
++
+ &pm6150_resin {
+ 	linux,code = <KEY_VOLUMEDOWN>;
+ 	status = "okay";
+ };
+ 
++&qupv3_id_0 {
++	status = "okay";
++};
++
+ &tlmm {
+ 	/* These pins are assigned to secure-world peripherals by the firmware. */
+ 	gpio-reserved-ranges = <0 4>, <6 4>, <37 2>;
++
++	tsp_en_default: tsp-en-state {
++		pins = "gpio93";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-pull-down;
++	};
++
++	tsp_int_default: tsp-int-state {
++		pins = "gpio89";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++		input-enable;
++	};
+ };
+ 
+ &ufs_mem_hc {

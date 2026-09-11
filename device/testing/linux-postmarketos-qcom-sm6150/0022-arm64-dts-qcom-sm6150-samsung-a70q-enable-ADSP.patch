@@ -1,0 +1,33 @@
+From bd103c8471a5bb835fa809ab8d1df3ba46393aa2 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Wed, 9 Sep 2026 16:59:03 +0200
+Subject: [PATCH 22/37] arm64: dts: qcom: sm6150-samsung-a70q: enable ADSP
+
+The shared Talos description already provides the PAS, SMP2P, GLINK,
+FastRPC and GPR topology, while the A70 board DTS supplies its
+firmware-derived reserved-memory layout. Select the redistributable
+QCS615 firmware and enable the ADSP so those services can be brought
+up on the handset.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 4ac29bb49..11a685e6f 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -410,6 +410,12 @@ &qupv3_id_0 {
+ 	status = "okay";
+ };
+ 
++&remoteproc_adsp {
++	firmware-name = "qcom/qcs615/adsp.mbn";
++
++	status = "okay";
++};
++
+ &tlmm {
+ 	/* These pins are assigned to secure-world peripherals by the firmware. */
+ 	gpio-reserved-ranges = <0 4>, <6 4>, <37 2>;

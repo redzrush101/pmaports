@@ -1,0 +1,28 @@
+From 6b710ffa09d45d94468116ba1e94fbd1e9ac36c1 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Wed, 9 Sep 2026 18:42:13 +0200
+Subject: [PATCH 23/37] arm64: dts: qcom: a70q: use board ADSP firmware
+
+The generic QCS615 firmware is signed with the Qualcomm test root, which is
+rejected by the Samsung production trust chain after QHEE forwards
+PAS_INIT_IMAGE to TrustZone. Select the Samsung-signed board firmware
+instead.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 11a685e6f..525e55c94 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -411,7 +411,7 @@ &qupv3_id_0 {
+ };
+ 
+ &remoteproc_adsp {
+-	firmware-name = "qcom/qcs615/adsp.mbn";
++	firmware-name = "qcom/sm6150/a70q/adsp.mdt";
+ 
+ 	status = "okay";
+ };
