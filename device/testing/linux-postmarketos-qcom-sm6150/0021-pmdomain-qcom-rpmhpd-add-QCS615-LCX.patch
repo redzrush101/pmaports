@@ -1,7 +1,7 @@
-From 7dea717561615eab566e4c51481f2789709099ea Mon Sep 17 00:00:00 2001
+From 26c5ccf48388bf4a3bcaf2c2ae4558e198657832 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:04:18 +0200
-Subject: [PATCH 21/28] pmdomain: qcom: rpmhpd: add QCS615 LCX
+Subject: [PATCH 21/29] pmdomain: qcom: rpmhpd: add QCS615 LCX
 
 QCS615 command DB advertises the lcx.lvl ARC resource.
 

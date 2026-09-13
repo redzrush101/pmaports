@@ -1,7 +1,7 @@
-From bd30920a203b386e495e88c12aa611b6ef8a2d3a Mon Sep 17 00:00:00 2001
+From e5599f8cb519f70757475ab2716007b0ef49878f Mon Sep 17 00:00:00 2001
 From: Markuss Broks <markuss.broks@gmail.com>
 Date: Sat, 22 Aug 2026 00:30:15 +0300
-Subject: [PATCH 05/30] Input: imagis - replace the protocol_b flag with a
+Subject: [PATCH 05/29] Input: imagis - replace the protocol_b flag with a
  protocol enum
 
 The driver tells the two supported touch reporting formats apart with
@@ -20,6 +20,9 @@ contact (IST3032C and IST3038C).
 No functional change intended.
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+ drivers/input/touchscreen/imagis.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen/imagis.c
 index 7cc91f97c..6552d97ef 100644

@@ -1,7 +1,7 @@
-From 6155a4d9b1b89c6108815fd5b1ee28659055f75e Mon Sep 17 00:00:00 2001
+From 1aabc05fba9c437f3c77d33cb4e1c364c38581fb Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 23:01:45 +0200
-Subject: [PATCH 10/30] usb: dwc3: qcom: restore UTMI clock selection on resume
+Subject: [PATCH 10/29] usb: dwc3: qcom: restore UTMI clock selection on resume
 
 Platforms without a SuperSpeed PHY can select the UTMI clock as the PIPE
 clock through QSCRATCH. The USB power domain may lose this configuration
@@ -12,6 +12,9 @@ clocks and interconnects have been enabled. This happens before the DWC3
 core is resumed and starts issuing endpoint commands.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/usb/dwc3/dwc3-qcom.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
 index ac68b4218..73280dc7d 100644

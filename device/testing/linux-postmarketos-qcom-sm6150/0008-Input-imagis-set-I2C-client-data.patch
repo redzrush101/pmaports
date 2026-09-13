@@ -1,7 +1,7 @@
-From 66bd3e092a8687633336f417068d67afbf20128b Mon Sep 17 00:00:00 2001
+From b63c5d90c8ad784ffe8a28fe749657c0694345df Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 18:47:29 +0200
-Subject: [PATCH 08/30] Input: imagis - set I2C client data
+Subject: [PATCH 08/29] Input: imagis - set I2C client data
 
 The suspend and resume callbacks retrieve the driver data with
 i2c_get_clientdata(), but probe never stores it. This causes either
@@ -11,6 +11,9 @@ Store the touchscreen data during probe so the power-management
 callbacks can use it.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/input/touchscreen/imagis.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen/imagis.c
 index 9bf5afd43..6545cc190 100644

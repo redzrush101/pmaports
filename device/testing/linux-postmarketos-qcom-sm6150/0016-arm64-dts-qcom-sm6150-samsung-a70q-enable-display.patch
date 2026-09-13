@@ -1,7 +1,7 @@
-From 2a315fdb7ebb76fa7798a85d5fe0de6331eaea99 Mon Sep 17 00:00:00 2001
+From 98b364621e0c0e8110ec5adeed58309fdd2b60bb Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:15 +0200
-Subject: [PATCH 16/30] arm64: dts: qcom: sm6150-samsung-a70q: enable display
+Subject: [PATCH 16/29] arm64: dts: qcom: sm6150-samsung-a70q: enable display
 
 Describe the MDSS, DSI host, DSI PHY and AMS670TA01 panel
 connections on the Galaxy A70, including the downstream-derived timings,
@@ -12,9 +12,12 @@ IOVA mapping so firmware scanout remains valid until the DRM driver takes
 over.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 86 ++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-index ecac1eb64..9159e200a 100644
+index 28b7f6780..d6c1a0d4a 100644
 --- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 @@ -137,6 +137,7 @@ pil_gpu_mem: pil-gpu@9a915000 {
@@ -52,8 +55,8 @@ index ecac1eb64..9159e200a 100644
  	};
  
  	regulators-1 {
-@@ -298,9 +313,8 @@ &aggre1_noc {
- 	/delete-property/ clocks;
+@@ -293,9 +308,8 @@ vreg_l11c_3p0: ldo11 {
+ 	};
  };
  
 -/* Keep the bootloader-configured display running for simple-framebuffer. */
@@ -63,7 +66,7 @@ index ecac1eb64..9159e200a 100644
  };
  
  &gpi_dma0 {
-@@ -325,11 +339,64 @@ touchscreen@50 {
+@@ -320,11 +334,64 @@ touchscreen@50 {
  	};
  };
  
@@ -128,7 +131,7 @@ index ecac1eb64..9159e200a 100644
  &qupv3_id_0 {
  	status = "okay";
  };
-@@ -350,7 +417,20 @@ tsp_int_default: tsp-int-state {
+@@ -345,7 +412,20 @@ tsp_int_default: tsp-int-state {
  		function = "gpio";
  		drive-strength = <2>;
  		bias-disable;

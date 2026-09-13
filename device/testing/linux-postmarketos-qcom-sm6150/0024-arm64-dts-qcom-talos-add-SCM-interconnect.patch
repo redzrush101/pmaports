@@ -1,7 +1,7 @@
-From 6e7fcfc186bd664ae2bc43cb3df27486ea675696 Mon Sep 17 00:00:00 2001
+From f6b8203302340cf84850e6ad772ca42d708cac16 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 17:00:57 +0200
-Subject: [PATCH 24/28] arm64: dts: qcom: talos: add SCM interconnect
+Subject: [PATCH 24/29] arm64: dts: qcom: talos: add SCM interconnect
 
 The secure firmware uses the crypto path while authenticating and loading
 peripheral images. Describe its path to DDR so the SCM driver can issue

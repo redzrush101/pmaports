@@ -1,12 +1,15 @@
-From a4e5c66187a72e043eafb5c1835807e4cc8dff38 Mon Sep 17 00:00:00 2001
+From 1cc2b15b84967679c1f526f651a0124ad026e896 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 17:53:49 +0200
-Subject: [PATCH 14/30] drm/panel: samsung-s6e3fc2x01: add AMS670TA01 support
+Subject: [PATCH 14/29] drm/panel: samsung-s6e3fc2x01: add AMS670TA01 support
 
 Add the mode, power sequencing and DCS command sequence for the
 1080x2400 AMS670TA01 panel used by the Samsung Galaxy A70.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../gpu/drm/panel/panel-samsung-s6e3fc2x01.c  | 170 +++++++++++++++++-
+ 1 file changed, 167 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c b/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c
 index 994b65fd0..22a629018 100644

@@ -1,7 +1,7 @@
-From 3690b0aff365c12405088e12bad6a4ac1ddea738 Mon Sep 17 00:00:00 2001
+From 1652869335d1cc9b550998540c4b89617c892ac9 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:50 +0200
-Subject: [PATCH 26/28] arm64: dts: qcom: sm6150-samsung-a70q: enable GPU
+Subject: [PATCH 26/29] arm64: dts: qcom: sm6150-samsung-a70q: enable GPU
 
 Enable the Adreno 612 and select the Samsung-signed board zap firmware.
 Replace the generic GPU OPP table with the five frequencies, RPMh levels
@@ -14,7 +14,7 @@ Signed-off-by: Yassin <yassin@Nixos>
  1 file changed, 47 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-index 7a0284527..3ed68b32b 100644
+index 92a10833c..8d7dbccbc 100644
 --- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 @@ -230,6 +230,45 @@ opp-2016000000 {
@@ -63,7 +63,7 @@ index 7a0284527..3ed68b32b 100644
  /*
   * The Samsung firmware requires platform-specific preparation before CPU
   * power collapse.  Keep the architectural WFI idle state until that support
-@@ -345,6 +384,14 @@ &gpi_dma0 {
+@@ -340,6 +379,14 @@ &gpi_dma0 {
  	status = "okay";
  };
  

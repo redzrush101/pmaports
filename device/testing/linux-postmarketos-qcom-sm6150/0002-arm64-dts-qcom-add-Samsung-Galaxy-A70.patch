@@ -1,7 +1,7 @@
-From f96ca4d745149853fb9c0ae22cf7ef991db025e6 Mon Sep 17 00:00:00 2001
+From aae47ee9df3baca8c611ebf51a0eebf3bc8ad754 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:41:58 +0200
-Subject: [PATCH 02/30] arm64: dts: qcom: add Samsung Galaxy A70
+Subject: [PATCH 02/29] arm64: dts: qcom: add Samsung Galaxy A70
 
 Add initial support for the Samsung Galaxy A70 based on SM6150.
 
@@ -16,6 +16,11 @@ states that require unsupported Samsung firmware preparation while
 leaving architectural WFI available.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 328 ++++++++++++++++++
+ 2 files changed, 329 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 
 diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
 index 1c86e7e98..016783be3 100644
@@ -31,10 +36,10 @@ index 1c86e7e98..016783be3 100644
  dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-curtana.dtb
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 new file mode 100644
-index 000000000..d8fcff1be
+index 000000000..31e1bd507
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-@@ -0,0 +1,333 @@
+@@ -0,0 +1,328 @@
 +// SPDX-License-Identifier: BSD-3-Clause
 +
 +/dts-v1/;
@@ -316,11 +321,6 @@ index 000000000..d8fcff1be
 +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
 +		};
 +	};
-+};
-+
-+/* Samsung's firmware leaves the A1 NoC clocks managed outside of Linux. */
-+&aggre1_noc {
-+	/delete-property/ clocks;
 +};
 +
 +/* Keep the bootloader-configured display running for simple-framebuffer. */

@@ -1,7 +1,7 @@
-From 4042a4ee73ed7c93a155ab754c9de8ae40636624 Mon Sep 17 00:00:00 2001
+From 3db302ec41ec316019c025709808705e572ebbaa Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 00:06:09 +0200
-Subject: [PATCH 13/30] drm/panel: samsung-s6e3fc2x01: preserve DSI mode flags
+Subject: [PATCH 13/29] drm/panel: samsung-s6e3fc2x01: preserve DSI mode flags
  on brightness update
 
 Brightness commands must be sent in high-speed mode, but the previous
@@ -9,6 +9,9 @@ code unconditionally enabled low-power mode afterwards. Save and restore
 the complete mode flag state on both success and failure.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c b/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c
 index fffc677ca..994b65fd0 100644

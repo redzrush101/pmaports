@@ -1,7 +1,7 @@
-From e00be0f689af870a2af1d893c0c1643a5dd25c5e Mon Sep 17 00:00:00 2001
+From 8c9c976b3cac7c1be315227f1b84aea715b0c289 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 23:33:10 +0200
-Subject: [PATCH 28/28] drm/msm/dpu: recover from missed command-mode CTL_START
+Subject: [PATCH 28/29] drm/msm/dpu: recover from missed command-mode CTL_START
  IRQ
 
 Command-mode kickoffs increment both the CTL_START and pingpong pending

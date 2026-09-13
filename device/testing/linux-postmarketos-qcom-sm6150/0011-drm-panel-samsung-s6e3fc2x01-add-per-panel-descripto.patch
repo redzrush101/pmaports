@@ -1,7 +1,7 @@
-From abda9f5a8d8f44ae03e10e34066cf32808ad10a0 Mon Sep 17 00:00:00 2001
+From 9344ae68253ba67079bf303b3aa4230b777a779a Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 23:56:32 +0200
-Subject: [PATCH 11/30] drm/panel: samsung-s6e3fc2x01: add per-panel
+Subject: [PATCH 11/29] drm/panel: samsung-s6e3fc2x01: add per-panel
  descriptors
 
 Move the hard-coded mode, supplies, DSI flags and command sequences
@@ -9,6 +9,9 @@ into a panel descriptor. This preserves the existing AMS646YB01 behaviour
 while allowing related panels to share the driver.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../gpu/drm/panel/panel-samsung-s6e3fc2x01.c  | 73 ++++++++++++++-----
+ 1 file changed, 55 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c b/drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c
 index e63080204..fffc677ca 100644

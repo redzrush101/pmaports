@@ -1,0 +1,33 @@
+From c4c1de24bec54e9c293da8a63db7affc356c56dc Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Sun, 13 Sep 2026 22:59:41 +0200
+Subject: [PATCH 29/29] arm64: dts: qcom: a70q: isolate A1 NoC clock workaround
+
+Samsung downstream leaves the A1 fabric clock list empty and assigns QoS clocks to individual masters. The mainline QCS615 interconnect driver instead models four provider-wide clocks.
+
+Keep the current provider clock deletion as a separate board workaround until node-specific clock ownership can be represented. This keeps the base board description independent from the unresolved QoS model.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 85052cb51..d557a4ff1 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -376,6 +376,14 @@ vreg_l11c_3p0: ldo11 {
+ 	};
+ };
+ 
++/*
++ * Downstream has no fabric-level A1 NoC QoS clocks. Keep QoS programming
++ * disabled until its node-specific clock ownership can be represented.
++ */
++&aggre1_noc {
++	/delete-property/ clocks;
++};
++
+ &dispcc {
+ 	status = "okay";
+ };

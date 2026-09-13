@@ -1,7 +1,7 @@
-From 3f36790e58561e2f6710d5f3c3caf95e1f74d25a Mon Sep 17 00:00:00 2001
+From 9be558b035dd5adcb6e58f9f087d57feaa14569c Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 17:24:47 +0200
-Subject: [PATCH 25/28] firmware: qcom: tzmem: disable SHM Bridge on SM6150
+Subject: [PATCH 25/29] firmware: qcom: tzmem: disable SHM Bridge on SM6150
 
 Samsung SM6150 secure firmware reports SHM Bridge support, but its
 ADSP PAS init-image request subsequently fails with -EINVAL. The working
