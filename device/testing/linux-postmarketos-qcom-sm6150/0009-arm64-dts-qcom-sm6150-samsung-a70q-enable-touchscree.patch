@@ -1,7 +1,7 @@
-From b49dcb0f50dc5d080a24512eb2fd9633025f68bf Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 18:47:30 +0200
-Subject: [PATCH 09/37] arm64: dts: qcom: sm6150-samsung-a70q: enable
+Subject: [PATCH 09/30] arm64: dts: qcom: sm6150-samsung-a70q: enable
  touchscreen
 
 The Galaxy A70 uses an Imagis IST4050 touchscreen on QUP0 I2C1.
@@ -23,7 +23,7 @@ Signed-off-by: Yassin <yassin@Nixos>
  1 file changed, 53 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-index 46c294d72..8e092921d 100644
+index d8fcff1be..ecac1eb64 100644
 --- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 @@ -3,6 +3,7 @@
@@ -52,7 +52,7 @@ index 46c294d72..8e092921d 100644
  	reserved-memory {
  		kaslr_mem: kaslr@80001000 {
  			reg = <0x0 0x80001000 0x0 0x1000>;
-@@ -279,14 +291,55 @@ &dispcc {
+@@ -291,14 +303,55 @@ &dispcc {
  	status = "disabled";
  };
  

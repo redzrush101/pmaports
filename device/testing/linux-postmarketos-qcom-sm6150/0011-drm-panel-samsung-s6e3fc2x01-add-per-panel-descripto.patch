@@ -1,7 +1,7 @@
-From 03b3ef44339a579479d4c5f4cad92f8b57f05594 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 23:56:32 +0200
-Subject: [PATCH 11/37] drm/panel: samsung-s6e3fc2x01: add per-panel
+Subject: [PATCH 11/30] drm/panel: samsung-s6e3fc2x01: add per-panel
  descriptors
 
 Move the hard-coded mode, supplies, DSI flags and command sequences

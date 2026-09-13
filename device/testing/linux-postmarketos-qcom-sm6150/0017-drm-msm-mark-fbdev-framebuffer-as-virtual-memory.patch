@@ -1,7 +1,7 @@
-From 223617efbbd484dbdbe1ac2b1f3e834b683c97e4 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 16:38:02 +0200
-Subject: [PATCH 17/37] drm/msm: mark fbdev framebuffer as virtual memory
+Subject: [PATCH 17/30] drm/msm: mark fbdev framebuffer as virtual memory
 
 The MSM fbdev screen buffer is a CPU virtual mapping of a GEM object.
 Mark it as virtual memory so fbcon uses the appropriate software drawing

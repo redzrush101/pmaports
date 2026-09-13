@@ -1,7 +1,7 @@
-From 684d5d1159fb34f4e0fb7f5da6c9188c98aabd3e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 00:03:25 +0200
-Subject: [PATCH 12/37] dt-bindings: display: panel: add Samsung AMS670TA01
+Subject: [PATCH 12/30] dt-bindings: display: panel: add Samsung AMS670TA01
 
 Document the AMS670TA01 panel found in the Samsung Galaxy A70.
 Unlike AMS646YB01, this panel is powered by VDDIO and VCI supplies.

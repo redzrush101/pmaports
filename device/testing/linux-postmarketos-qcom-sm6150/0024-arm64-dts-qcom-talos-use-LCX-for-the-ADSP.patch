@@ -1,7 +1,7 @@
-From 37816e14fe4e790fe60fd16db112bd48d69b7164 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:04:18 +0200
-Subject: [PATCH 29/37] arm64: dts: qcom: talos: use LCX for the ADSP
+Subject: [PATCH 24/30] arm64: dts: qcom: talos: use LCX for the ADSP
 
 The QCS615 ADSP logical VDD_CX supply is backed by lcx.lvl.
 

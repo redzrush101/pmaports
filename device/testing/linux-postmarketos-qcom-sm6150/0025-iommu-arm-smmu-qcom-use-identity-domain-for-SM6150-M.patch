@@ -1,7 +1,7 @@
-From c858932d8c6824d2b39211afb5a89f3693314780 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:52:07 +0200
-Subject: [PATCH 30/37] iommu/arm-smmu-qcom: use identity domain for SM6150
+Subject: [PATCH 25/30] iommu/arm-smmu-qcom: use identity domain for SM6150
  MDSS
 
 The SM6150 display controller can be left scanning out a splash buffer

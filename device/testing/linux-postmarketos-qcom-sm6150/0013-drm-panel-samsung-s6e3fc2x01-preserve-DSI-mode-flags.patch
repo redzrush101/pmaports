@@ -1,7 +1,7 @@
-From 11ca6e25ad9fab8902239d2343b14fb309977820 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 00:06:09 +0200
-Subject: [PATCH 13/37] drm/panel: samsung-s6e3fc2x01: preserve DSI mode flags
+Subject: [PATCH 13/30] drm/panel: samsung-s6e3fc2x01: preserve DSI mode flags
  on brightness update
 
 Brightness commands must be sent in high-speed mode, but the previous

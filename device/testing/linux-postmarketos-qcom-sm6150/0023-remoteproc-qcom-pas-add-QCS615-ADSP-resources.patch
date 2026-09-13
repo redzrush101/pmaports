@@ -1,7 +1,7 @@
-From 0daf70d72729a377c05c44c119f8adf22be7219e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:04:18 +0200
-Subject: [PATCH 28/37] remoteproc: qcom: pas: add QCS615 ADSP resources
+Subject: [PATCH 23/30] remoteproc: qcom: pas: add QCS615 ADSP resources
 
 The QCS615 compatible falls through to the SM8150 match data.
 

@@ -1,7 +1,7 @@
-From 22f6bf06440e1e384a575ca9f11f90b3b39f9749 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Markuss Broks <markuss.broks@gmail.com>
 Date: Sat, 22 Aug 2026 00:30:17 +0300
-Subject: [PATCH 07/37] Input: imagis - add support for IST4050
+Subject: [PATCH 07/30] Input: imagis - add support for IST4050
 
 The Imagis IST4050 shares the register interface and the power-up
 sequence with IST3038C, and reports touches using the IST40xx touch

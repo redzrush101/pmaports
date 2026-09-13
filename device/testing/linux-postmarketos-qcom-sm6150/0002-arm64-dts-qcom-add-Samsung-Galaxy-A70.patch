@@ -1,14 +1,16 @@
-From c80ae3f3847b0c076fe94dfe6e4bdd706c2a3e41 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
-Date: Mon, 7 Sep 2026 17:31:04 +0200
-Subject: [PATCH 02/37] arm64: dts: qcom: add Samsung Galaxy A70
+Date: Sat, 12 Sep 2026 13:41:58 +0200
+Subject: [PATCH 02/30] arm64: dts: qcom: add Samsung Galaxy A70
 
 Add initial support for the Samsung Galaxy A70 based on SM6150.
 
-Describe the board clocks, reserved memory, bootloader framebuffer,
-RPMh regulators, UFS, volume-down key and USB gadget path.
+Describe the board clocks, bootloader framebuffer, firmware-derived
+reserved-memory layout, RPMh regulators, UFS, volume-down key and USB
+gadget path. Pin dynamic firmware heaps to the addresses selected by
+Samsung firmware and avoid duplicating the bootloader-provided UH heap.
 
-Reserve the GPIO ranges owned by secure firmware and retain firmware
+Reserve GPIO ranges owned by secure firmware and retain firmware
 ownership of unavailable A1 NoC clocks. Disable PSCI power-collapse
 states that require unsupported Samsung firmware preparation while
 leaving architectural WFI available.
@@ -16,8 +18,8 @@ leaving architectural WFI available.
 Signed-off-by: Yassin <yassin@Nixos>
 ---
  arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 321 ++++++++++++++++++
- 2 files changed, 322 insertions(+)
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 333 ++++++++++++++++++
+ 2 files changed, 334 insertions(+)
  create mode 100644 arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 
 diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
@@ -34,10 +36,10 @@ index 1c86e7e98..016783be3 100644
  dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-curtana.dtb
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 new file mode 100644
-index 000000000..46c294d72
+index 000000000..d8fcff1be
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-@@ -0,0 +1,321 @@
+@@ -0,0 +1,333 @@
 +// SPDX-License-Identifier: BSD-3-Clause
 +
 +/dts-v1/;
@@ -191,9 +193,9 @@ index 000000000..46c294d72
 +			pmsg-size = <0x40000>;
 +		};
 +
++		/* The bootloader places the FDT inside this reservation. */
 +		sec_debug_mem: sec-debug@a1400000 {
 +			reg = <0x0 0xa1400000 0x0 0x800000>;
-+			no-map;
 +		};
 +
 +		cdsp_secure_mem: cdsp-secure@a4000000 {
@@ -210,15 +212,27 @@ index 000000000..46c294d72
 +			reg = <0x0 0xb0200000 0x0 0x200000>;
 +		};
 +
-+		uh_heap_mem: uh-heap@b0400000 {
-+			reg = <0x0 0xb0400000 0x0 0x1400000>;
-+		};
-+
 +		modem_shared_mem: modem-shared@ba000000 {
 +			reg = <0x0 0xba000000 0x0 0x6000000>;
 +			no-map;
 +		};
++
++		linux_cma: linux,cma@f4400000 {
++			compatible = "shared-dma-pool";
++			reg = <0x0 0xf4400000 0x0 0x2800000>;
++			reusable;
++			linux,cma-default;
++		};
 +	};
++};
++
++/* Keep firmware-shared allocations at the addresses assigned by Samsung's QHEE. */
++&adsp_rpc_remote_heap_mem {
++	/delete-property/ alignment;
++	/delete-property/ alloc-ranges;
++	/delete-property/ size;
++
++	reg = <0x0 0xef000000 0x0 0x800000>;
 +};
 +
 +/*

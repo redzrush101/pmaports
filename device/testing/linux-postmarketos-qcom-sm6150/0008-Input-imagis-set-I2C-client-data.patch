@@ -1,7 +1,7 @@
-From 7f80e54f04152f8a695d1ad24871c4d3a421ae85 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 18:47:29 +0200
-Subject: [PATCH 08/37] Input: imagis - set I2C client data
+Subject: [PATCH 08/30] Input: imagis - set I2C client data
 
 The suspend and resume callbacks retrieve the driver data with
 i2c_get_clientdata(), but probe never stores it. This causes either

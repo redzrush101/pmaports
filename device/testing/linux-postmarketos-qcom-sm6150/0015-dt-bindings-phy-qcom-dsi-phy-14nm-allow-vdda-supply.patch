@@ -1,7 +1,7 @@
-From ae7b13c679361d889b384640977a373a7999b5ea Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 09:34:41 +0200
-Subject: [PATCH 15/37] dt-bindings: phy: qcom,dsi-phy-14nm: allow vdda supply
+Subject: [PATCH 15/30] dt-bindings: phy: qcom,dsi-phy-14nm: allow vdda supply
 
 The QCS615 integration powers the 14 nm DSI PHY from an external
 VDDA regulator. Document the optional supply used by that integration.

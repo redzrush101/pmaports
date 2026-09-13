@@ -1,7 +1,7 @@
-From 3a9070d39bd72a6f6ce4baba6067d7bd991ad2b9 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Mon, 7 Sep 2026 23:01:45 +0200
-Subject: [PATCH 10/37] usb: dwc3: qcom: restore UTMI clock selection on resume
+Subject: [PATCH 10/30] usb: dwc3: qcom: restore UTMI clock selection on resume
 
 Platforms without a SuperSpeed PHY can select the UTMI clock as the PIPE
 clock through QSCRATCH. The USB power domain may lose this configuration

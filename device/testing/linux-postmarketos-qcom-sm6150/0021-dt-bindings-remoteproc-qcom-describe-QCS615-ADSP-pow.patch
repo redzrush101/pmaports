@@ -1,7 +1,7 @@
-From 6ddfe3b8554807fe63c550ca6a271ce69e448853 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:07:01 +0200
-Subject: [PATCH 26/37] dt-bindings: remoteproc: qcom: describe QCS615 ADSP
+Subject: [PATCH 21/30] dt-bindings: remoteproc: qcom: describe QCS615 ADSP
  power domain
 
 The QCS615 ADSP is powered by the low-power island CX rail.

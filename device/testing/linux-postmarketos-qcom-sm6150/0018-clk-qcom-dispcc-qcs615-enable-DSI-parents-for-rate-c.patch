@@ -1,7 +1,7 @@
-From bb6c9c27587131db5d72c1e0c3247ea22f54cf5f Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 17:32:54 +0200
-Subject: [PATCH 18/37] clk: qcom: dispcc-qcs615: enable DSI parents for rate
+Subject: [PATCH 18/30] clk: qcom: dispcc-qcs615: enable DSI parents for rate
  changes
 
 Keep the DSI PHY PLL parents enabled while updating the byte and pixel

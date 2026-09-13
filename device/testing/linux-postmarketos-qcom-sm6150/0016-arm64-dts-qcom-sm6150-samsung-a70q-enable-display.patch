@@ -1,23 +1,34 @@
-From 88bd06ae757f9650293012c4c97f921b1d77ca4e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
-Date: Tue, 8 Sep 2026 17:49:33 +0200
-Subject: [PATCH 16/37] arm64: dts: qcom: sm6150-samsung-a70q: enable display
- panel
+Date: Sat, 12 Sep 2026 13:42:15 +0200
+Subject: [PATCH 16/30] arm64: dts: qcom: sm6150-samsung-a70q: enable display
 
-Describe the MDSS, DSI host, DSI PHY and AMS670TA01 panel connections
-on the Galaxy A70, including the downstream-derived timings, reset
-sequence and regulator assignments.
+Describe the MDSS, DSI host, DSI PHY and AMS670TA01 panel
+connections on the Galaxy A70, including the downstream-derived timings,
+reset sequence and regulator assignments.
+
+Associate the bootloader framebuffer with MDSS and describe its identity
+IOVA mapping so firmware scanout remains valid until the DRM driver takes
+over.
 
 Signed-off-by: Yassin <yassin@Nixos>
 ---
- .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 83 ++++++++++++++++++-
- 1 file changed, 80 insertions(+), 3 deletions(-)
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 86 ++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-index 8e092921d..be0353b40 100644
+index ecac1eb64..9159e200a 100644
 --- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 +++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
-@@ -252,12 +252,26 @@ vreg_l12a_1p8: ldo12 {
+@@ -137,6 +137,7 @@ pil_gpu_mem: pil-gpu@9a915000 {
+ 
+ 		cont_splash_mem: framebuffer@9c000000 {
+ 			reg = <0x0 0x9c000000 0x0 0xf00000>;
++			iommu-addresses = <&mdss 0x0 0x9c000000 0x0 0xf00000>;
+ 			no-map;
+ 		};
+ 
+@@ -264,12 +265,26 @@ vreg_l12a_1p8: ldo12 {
  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
  		};
  
@@ -44,7 +55,7 @@ index 8e092921d..be0353b40 100644
  	};
  
  	regulators-1 {
-@@ -286,9 +300,8 @@ &aggre1_noc {
+@@ -298,9 +313,8 @@ &aggre1_noc {
  	/delete-property/ clocks;
  };
  
@@ -55,11 +66,13 @@ index 8e092921d..be0353b40 100644
  };
  
  &gpi_dma0 {
-@@ -313,11 +326,62 @@ touchscreen@50 {
+@@ -325,11 +339,64 @@ touchscreen@50 {
  	};
  };
  
 +&mdss {
++	memory-region = <&cont_splash_mem>;
++
 +	status = "okay";
 +};
 +
@@ -118,7 +131,7 @@ index 8e092921d..be0353b40 100644
  &qupv3_id_0 {
  	status = "okay";
  };
-@@ -338,7 +402,20 @@ tsp_int_default: tsp-int-state {
+@@ -350,7 +417,20 @@ tsp_int_default: tsp-int-state {
  		function = "gpio";
  		drive-strength = <2>;
  		bias-disable;

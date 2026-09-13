@@ -1,7 +1,7 @@
-From 376bd9ff7961b79cb5ea933ce900d09da95357fb Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 5 Sep 2026 18:51:24 +0200
-Subject: [PATCH 01/37] dt-bindings: arm: qcom: add Samsung Galaxy A70
+Subject: [PATCH 01/30] dt-bindings: arm: qcom: add Samsung Galaxy A70
 
 Add the compatible for the Samsung Galaxy A70, a handset based on the
 Qualcomm SM6150 SoC. Its bootloader also requires the legacy msm-id and
