@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 9812e80b661bfc3ee206e413c374f3eb86a17255 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Tue, 8 Sep 2026 17:32:54 +0200
 Subject: [PATCH 18/30] clk: qcom: dispcc-qcs615: enable DSI parents for rate
@@ -9,9 +9,6 @@ RCG rates. The QCS615 display RCGs otherwise fail to latch their
 configuration during the first modeset.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- drivers/clk/qcom/dispcc-qcs615.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/qcom/dispcc-qcs615.c b/drivers/clk/qcom/dispcc-qcs615.c
 index 6a19f00f6..69eb82046 100644

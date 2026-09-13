@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From ca323a598ff0a306c56c62d57c979982263d0985 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 5 Sep 2026 18:51:24 +0200
 Subject: [PATCH 01/30] dt-bindings: arm: qcom: add Samsung Galaxy A70
@@ -8,9 +8,6 @@ Qualcomm SM6150 SoC. Its bootloader also requires the legacy msm-id and
 board-id properties, so allow SM6150 in that schema.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
 index ff8a35df7..90d3cb764 100644

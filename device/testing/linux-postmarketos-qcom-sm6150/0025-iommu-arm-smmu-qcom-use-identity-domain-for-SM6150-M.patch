@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 607e1d5b921b99d6ee7252ba4a1f218217dfa20a Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:52:07 +0200
 Subject: [PATCH 25/30] iommu/arm-smmu-qcom: use identity domain for SM6150
@@ -18,9 +18,6 @@ This also keeps the firmware framebuffer accessible continuously until
 native DRM is ready.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
 index 795e8ec7e..0a6d45d75 100644

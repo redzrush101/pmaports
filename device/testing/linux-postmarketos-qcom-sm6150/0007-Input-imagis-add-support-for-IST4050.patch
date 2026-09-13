@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 6b06b035c3f83f86d33e78a8d078fef3e1ef628e Mon Sep 17 00:00:00 2001
 From: Markuss Broks <markuss.broks@gmail.com>
 Date: Sat, 22 Aug 2026 00:30:17 +0300
 Subject: [PATCH 07/30] Input: imagis - add support for IST4050
@@ -12,10 +12,6 @@ the older chips as IST30xx, since the driver supports more than the C
 variants.
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- drivers/input/touchscreen/Kconfig  |  2 +-
- drivers/input/touchscreen/imagis.c | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
 index 9b9ae8ac3..96fdc4384 100644

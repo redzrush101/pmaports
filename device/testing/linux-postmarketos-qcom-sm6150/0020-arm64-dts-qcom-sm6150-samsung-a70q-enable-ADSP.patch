@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 4993d78d03546c524fd1a51ca77e525a03b6bb22 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:40 +0200
 Subject: [PATCH 20/30] arm64: dts: qcom: sm6150-samsung-a70q: enable ADSP
@@ -8,9 +8,6 @@ Galaxy A70. Select the board firmware signed for Samsung production
 devices instead of the generic Qualcomm test-signed image.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 index cc751484d..7a0284527 100644

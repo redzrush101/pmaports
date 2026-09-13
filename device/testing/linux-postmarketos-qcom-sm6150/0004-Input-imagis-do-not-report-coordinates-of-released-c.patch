@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 7acb27ff88190d37fa9142f08f635b2c54206b27 Mon Sep 17 00:00:00 2001
 From: Markuss Broks <markuss.broks@gmail.com>
 Date: Sat, 22 Aug 2026 00:30:14 +0300
 Subject: [PATCH 04/30] Input: imagis - do not report coordinates of released
@@ -15,9 +15,6 @@ the currently supported chips, so release records must not be parsed for
 coordinates or the contact area.
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- drivers/input/touchscreen/imagis.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen/imagis.c
 index 7bbb00bee..7cc91f97c 100644

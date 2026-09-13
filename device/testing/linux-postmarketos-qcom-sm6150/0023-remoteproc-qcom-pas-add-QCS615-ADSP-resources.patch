@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From feb5ff7986b76386aadb058822aae68b703dcce3 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:04:18 +0200
 Subject: [PATCH 23/30] remoteproc: qcom: pas: add QCS615 ADSP resources
@@ -12,9 +12,6 @@ Add QCS615 data selecting LCX.
 The remaining PAS identifiers and subsystem metadata match SM8150.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
 index ca8e61254..450e4e49d 100644

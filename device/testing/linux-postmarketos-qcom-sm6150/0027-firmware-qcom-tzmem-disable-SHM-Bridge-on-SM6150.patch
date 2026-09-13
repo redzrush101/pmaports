@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 1a04e6eed81294545cb87c40fa7fd773c15fd82a Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 17:24:47 +0200
 Subject: [PATCH 27/30] firmware: qcom: tzmem: disable SHM Bridge on SM6150
@@ -11,9 +11,6 @@ Use the generic TZ memory backend on SM6150, as is already required on
 the related SDM670 and SM7150 platforms.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- drivers/firmware/qcom/qcom_tzmem.c | 1 +
- 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
 index f926c1f64..c6ab77d8b 100644

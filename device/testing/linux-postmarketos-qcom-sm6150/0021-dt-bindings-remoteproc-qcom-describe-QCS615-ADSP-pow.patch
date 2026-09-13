@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From d5b1c2c05873a2960ebd64a279635e138b978885 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:07:01 +0200
 Subject: [PATCH 21/30] dt-bindings: remoteproc: qcom: describe QCS615 ADSP
@@ -11,9 +11,6 @@ Describe its single LCX domain so validation catches wrong wiring.
 Exclude its SM8150 fallback compatible from the existing CX rule.
 
 Signed-off-by: Yassin <yassin@Nixos>
----
- .../bindings/remoteproc/qcom,sm8150-pas.yaml  | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
 index 5a7c5f8c9..317c9d643 100644
