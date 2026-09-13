@@ -1,7 +1,7 @@
-From 50cb3e309a0e275b749f155ae3eb46f16223f4e9 Mon Sep 17 00:00:00 2001
+From 3690b0aff365c12405088e12bad6a4ac1ddea738 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:50 +0200
-Subject: [PATCH 28/30] arm64: dts: qcom: sm6150-samsung-a70q: enable GPU
+Subject: [PATCH 26/28] arm64: dts: qcom: sm6150-samsung-a70q: enable GPU
 
 Enable the Adreno 612 and select the Samsung-signed board zap firmware.
 Replace the generic GPU OPP table with the five frequencies, RPMh levels
@@ -9,6 +9,9 @@ and bandwidth votes exposed for this board speed bin by downstream
 firmware.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../boot/dts/qcom/sm6150-samsung-a70q.dts     | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
 index 7a0284527..3ed68b32b 100644

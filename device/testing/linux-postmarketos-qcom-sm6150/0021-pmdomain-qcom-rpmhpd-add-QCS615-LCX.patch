@@ -1,7 +1,7 @@
-From e7a6b0d398c862d3decba964a3f39e910e16cc72 Mon Sep 17 00:00:00 2001
+From 7dea717561615eab566e4c51481f2789709099ea Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Wed, 9 Sep 2026 23:04:18 +0200
-Subject: [PATCH 22/30] pmdomain: qcom: rpmhpd: add QCS615 LCX
+Subject: [PATCH 21/28] pmdomain: qcom: rpmhpd: add QCS615 LCX
 
 QCS615 command DB advertises the lcx.lvl ARC resource.
 
@@ -10,6 +10,9 @@ Downstream uses this logical PM6150 L8 rail to power the ADSP.
 Expose LCX through the QCS615 RPMh power-domain provider.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/pmdomain/qcom/rpmhpd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
 index 907432759..25e410394 100644

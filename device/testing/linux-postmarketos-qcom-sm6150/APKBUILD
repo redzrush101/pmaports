@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=0
+pkgrel=1
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -59,16 +59,14 @@ source="
 	0018-clk-qcom-dispcc-qcs615-enable-DSI-parents-for-rate-c.patch
 	0019-arm64-dts-qcom-sm6150-samsung-a70q-correct-CPU-OPPs.patch
 	0020-arm64-dts-qcom-sm6150-samsung-a70q-enable-ADSP.patch
-	0021-dt-bindings-remoteproc-qcom-describe-QCS615-ADSP-pow.patch
-	0022-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
-	0023-remoteproc-qcom-pas-add-QCS615-ADSP-resources.patch
-	0024-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
-	0025-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
-	0026-arm64-dts-qcom-talos-add-SCM-interconnect.patch
-	0027-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
-	0028-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
-	0029-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
-	0030-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
+	0021-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
+	0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
+	0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
+	0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
+	0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
+	0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
+	0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
+	0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
 	config-$_flavor.aarch64
 "
 builddir="$srcdir/linux-$_commit"
@@ -127,15 +125,13 @@ ed3a600098c9217a5302faecfcead07434d4db1557b60f2b7eb59e16bc644fe9a274ba88e450a544
 d7953c3b0afb7c1ecb06f6c7ce9be0fdb0f9f6991ab05f4bb5e99ba23582130e99fd47c9a1bbca81345b029cedbd91791a95ea821784e29a8513899f620168a7  0018-clk-qcom-dispcc-qcs615-enable-DSI-parents-for-rate-c.patch
 81772d8d21b88e45d1dcb06049fa509d359c005b7844c88ec412db1943e3e837b889125961a4258444f41ece458cd66ed35c64596d3def27c733cc9e11bc6715  0019-arm64-dts-qcom-sm6150-samsung-a70q-correct-CPU-OPPs.patch
 742589584600c821ab35404c98f30b9b67242ab8b5b9b439549f8622278db18a5b7123c3567b4e84a7fe8abf8cb9d2fea6334ed064d21d9c3c6e7a6fcdd1f893  0020-arm64-dts-qcom-sm6150-samsung-a70q-enable-ADSP.patch
-a38680ac29b5eb2c117c1fb8f013ac49d0379ac28826783bb98e438a9a3d2be10526e96bf77b807b2a4748a4c591fe8d3b77a4dd76e91bba1fcabf40433f1de6  0021-dt-bindings-remoteproc-qcom-describe-QCS615-ADSP-pow.patch
-db080826df48ac28d82491df752e4046c110128989c428dcfd555d9997a5a5bb2a46aad23da9c4a37b76ed1516e68b6769ef600b5f876bf081e9184322993edc  0022-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
-35d84b28c15c6a46b5e095b87ae3f7e0907c6fb2c7fbe9a5d6ba1e0c166ae79f3618e6a298972f1f9b31b609ec1a0574f090596e08a760d3611be63d3b85a695  0023-remoteproc-qcom-pas-add-QCS615-ADSP-resources.patch
-549f8f5176153fa89e776fb03c42cb9a6854e04aeeb639bd7064044d31699d5702111f5b6a25db76bd7ec6776daf0af96cd99bc6f1b451581be4c81dab0466b3  0024-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
-05c9f3e0efa1a66afd997f7ebfcaa8140ffbda997f994b90c4c75edac413eace8941a32ca3e27fec0c63101c6a6e2f9f9019eadf1fe73a2828b1e269f38cf67a  0025-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
-546af3f1e0a934a62c817a12af39ff7209df3c2bf62a501fcc80f47dfeb0ee3b1db07f1c580cb456d970d64d314b5dc19a26c4790eb12e5600a7de7d411d3809  0026-arm64-dts-qcom-talos-add-SCM-interconnect.patch
-3d3ed45f9667e3b00161fc9f07536c9e892ac1c2e1fd4f9813f15f8067cfdcdc9095161ba698dee8cd85b370d11138164cde864d31d4c141c1099425d5bfccf9  0027-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
-cafe51535b0ba251409717dfe35a241f92c3ef1c79b339cb3e2f442c753e726ad0c13abe3960305a12b20c728bca0b1c34a072288ccb62e04a72c74405796c66  0028-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
-cd26cb561f3a3cfa0111be0f3e03ca5debc44fb7352d4c89ee6cc3b1371dc64946c75af55ad48cd1f83de4a816bd1d7b399d8ad8b3ad443503458ec0659738d6  0029-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
-40357d3aad3ab690cf8048590ab9b759e658626200cc2977b5e389eafc520d4b8f0633f25c960b9bdcffa923781b4617c14467935b6048d55c25a8af95b23ed4  0030-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
+06a87c85531eeab682882e787d1e28a8a5e7075e876e3ff8f02eee23ed1e4bb11b4d859959ad653808819fcf072858d88e389cd7f3e2eb94244c750692125f81  0021-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
+6288bb5f81612fcd097f9aad4d6278ecdbe997d34b4dd2ef92a7a5caaeffc752732c6eb79771411b904911b2d99911961464e1d31fb0739e846e0d0539153a2b  0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
+af6b50a99b90d09ce2794efd028fa9d5997033147c3634668751ca5e95e4a62126efbb6b3d2e128929fac675ad713c838f5a2942de882e9e796a1061a61a148d  0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
+dfedad01290d4e067719f51ab7c58217108cb35f80854eeb0245e020b071aee168ee961ee23459de2245b638b1d8d00c1ca055b3f97b4112df0d1f5b5f45726e  0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
+3d3876ea1fde2679b8ae27eaff86f44208f8e3585b1f9226c5bf93041a2f0af9f0863342850fc294281b0ca4409757ef9c6e7e1b29eca459324302e702ec9fcb  0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
+97d950d75a1e57cbf736b6d4e1efef321ee5697f7e32bc1f67175a5fe103d647d62a604498736b7dab455a7f9c8aec24855ca6c07417454eff3b98945407e78c  0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
+4f77ceaf8a17aba810c2bf539736401a4bed9f20402c312e0e32c52e4aa5d51f56d1e36bc7d930d754591877324fff1bf1e8bea3b1fa63e08511704fbf225bfc  0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
+00ea37d457be04e492e6c8992da071f990684428be18751d342209310b5a3bb1f356e93f82e083635e45f3839e73341ef632c9b9cc21c148b810ce988a512ee9  0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
 41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
 "

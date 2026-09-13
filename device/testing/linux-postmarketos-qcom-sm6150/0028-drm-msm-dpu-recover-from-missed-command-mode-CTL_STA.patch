@@ -1,7 +1,7 @@
-From 07d21fb3468d50579eb2d2c13107fc2693ef7acd Mon Sep 17 00:00:00 2001
+From e00be0f689af870a2af1d893c0c1643a5dd25c5e Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 23:33:10 +0200
-Subject: [PATCH 30/30] drm/msm/dpu: recover from missed command-mode CTL_START
+Subject: [PATCH 28/28] drm/msm/dpu: recover from missed command-mode CTL_START
  IRQ
 
 Command-mode kickoffs increment both the CTL_START and pingpong pending
@@ -20,6 +20,9 @@ encoder and prevents one lost interrupt from poisoning all later atomic
 commits.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c  | 24 +++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
 index 45079ee59..ed3bf8363 100644

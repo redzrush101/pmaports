@@ -1,7 +1,7 @@
-From 0c269442917859c3911b9236096c890d5ffe52ae Mon Sep 17 00:00:00 2001
+From 6e7fcfc186bd664ae2bc43cb3df27486ea675696 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Thu, 10 Sep 2026 17:00:57 +0200
-Subject: [PATCH 26/30] arm64: dts: qcom: talos: add SCM interconnect
+Subject: [PATCH 24/28] arm64: dts: qcom: talos: add SCM interconnect
 
 The secure firmware uses the crypto path while authenticating and loading
 peripheral images. Describe its path to DDR so the SCM driver can issue
@@ -12,9 +12,12 @@ downstream PIL implementation, which explicitly votes the same path
 before PAS_INIT_IMAGE and the other PAS operations.
 
 Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/talos.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
-index e6f6f85bf..c6ca3e62b 100644
+index 42ea1dfd7..b61104ca9 100644
 --- a/arch/arm64/boot/dts/qcom/talos.dtsi
 +++ b/arch/arm64/boot/dts/qcom/talos.dtsi
 @@ -473,6 +473,8 @@ memory@80000000 {
