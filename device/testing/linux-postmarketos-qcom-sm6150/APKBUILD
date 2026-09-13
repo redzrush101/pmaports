@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=2
+pkgrel=3
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -63,7 +63,7 @@ source="
 	0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
 	0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
 	0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
-	0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
+	0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-Galaxy-A70.patch
 	0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
 	0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
 	0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
@@ -130,10 +130,10 @@ ad4cc7fa3fa09b4b9a2cba7691a33f92b3d348f4440f5cdb12697811388e32cf2b71d7eb18f3beff
 f03b1aefb54bc259c230c63086009fbf12d9533327786a1df6a233be35995d6ab0c4bf17ae73e30888bad91672fb742504980906709664d9372f0740e1e6e2a7  0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
 27601a90ebf56782d4cef1c1affd4a1dbe3a361d22ddb8bf60f056a71588d322c2aab6ebf0b8883b4e86f0c420dc580c23cc514bb0ff087c4b4b86f5b560e182  0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
 8ee2df49e4349746a851c9630674f2628fc517802f971c341a913ccaa34c20c1c4acf2cb25bca16f925146f2bcd56fe6d359d66a0dccabf5c1178aa97700b8c5  0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
-38ae8c805bbe0f63d681cb1c417ca98a573f0436928e223c3bcdd3dafbb79d11670e8d7936c3cc5ef0806274641f74b5da1e48ce82514657710793b42fefabec  0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-SM6150.patch
-a12587cf70c00c9de4e30b4a6391c669cb8046e0b424cd75e7c1f6846d5d3fd8a3ea6507bc0a0d17e4e6a815f7f90cc473b52eaf407bb1235e63d4b6fab8af27  0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
-8f8139752f43bd2daeb6d9f952f0fea3672e8993f59ca5d5cc2d20d529ca44319095510adcbc05c72090c8e5752e5910e2721aee76e7101f90cfca8d416fe751  0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
-2eee205ba2c255e1844a84e52e885d418d0a5142905f8394eefe518d930c64ac78998b19c7fa905014ddb4244f478969d898be36d19f8e99f8c898d299ff268c  0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
-05f84531eeacadd4450a62a1ca96b9b2c537e75dea65edd4aa38e2fd40d021433c41de9cc74882cbaa2b7215f11ade4f6aff70f8df78d1aa6e0d4c1b8f2520c9  0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
+c414af53be3dfa6f1369314fea85581634e0258195cc0a1873c0ee4a347bcc088764dbb8b9f7eadef00fcda472a13f27c3233e1bdbccc615f52ba0590bb75c34  0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-Galaxy-A70.patch
+7ab85316827956a319fa1945b6febf801f6cc9267cb6951b00b5c0aa9cba6fa3852ef2af7c47a1431329c2708450e74b961e55f80a0b1e29c2ca2bb17af50b9a  0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
+a3d3682d6f84ae9e03bf7dbfeb6dce97d5296b57135c5b89a1bd76dca8d1a6678e050b1ce7ab8445f45cd48fd17f028e0f859022554a7bc3f59a63d6215ac4a0  0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
+cd86638d2d6ea846068e0aa0c9b53dbad9b1fffb4423cda122ddb81c3ca06fa2d824bdd4ee97eab2fbd625dbadaca3b2f58fb0d2d415f886bc3c83574fb8d8a4  0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
+cb0600b29367f12e8276a5f3b2cc3332186632fdfe97f774f048609373255566fc6a23ef7c9fe347403533ba39036da7354cc9d8d6ef719bf95dbd5576f35ffe  0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
 41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
 "

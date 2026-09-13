@@ -1,4 +1,4 @@
-From 5bc542dad738d564eddfe2a2a1620975d989ecbf Mon Sep 17 00:00:00 2001
+From 86f1fb79c85694a0611f551979913c85c54ef9ba Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:50 +0200
 Subject: [PATCH 27/29] arm64: dts: qcom: sm6150-samsung-a70q: enable Venus

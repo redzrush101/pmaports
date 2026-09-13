@@ -1,4 +1,4 @@
-From 1652869335d1cc9b550998540c4b89617c892ac9 Mon Sep 17 00:00:00 2001
+From 25704ac6dbdca0e46ce6e9f41645445b074e99a8 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sat, 12 Sep 2026 13:42:50 +0200
 Subject: [PATCH 26/29] arm64: dts: qcom: sm6150-samsung-a70q: enable GPU

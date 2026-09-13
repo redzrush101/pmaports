@@ -1,4 +1,4 @@
-From c4c1de24bec54e9c293da8a63db7affc356c56dc Mon Sep 17 00:00:00 2001
+From 0a0bf213af76cbf373e22b2ae85c253152b73829 Mon Sep 17 00:00:00 2001
 From: Yassin <yassin@Nixos>
 Date: Sun, 13 Sep 2026 22:59:41 +0200
 Subject: [PATCH 29/29] arm64: dts: qcom: a70q: isolate A1 NoC clock workaround
