@@ -1,0 +1,33 @@
+From 1fae94c128a89b4028a18ace40175706a9718344 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 14 Sep 2026 12:10:55 +0200
+Subject: [PATCH] Revert "arm64: dts: qcom: a70q: enable cluster L3 power
+ collapse"
+
+This reverts commit fa8c0328aafd2ce9b9e86ea76f54a7186f5564c6.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 2ecd44fc6..ef0a95b70 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -276,9 +276,13 @@ &venus_opp_table {
+ 
+ /*
+  * Match the cluster modes and latency ordering used by the A70 firmware.
+- * CPU and rail power collapse have passed staged validation. Enable L3 power
+- * collapse first; keep the deeper cluster states disabled until it is proven.
++ * CPU power collapse has passed staged validation. Keep cluster collapse
++ * disabled while validating the per-CPU rail power-collapse state.
+  */
++&cluster_sleep_0 {
++	status = "disabled";
++};
++
+ &cluster_sleep_1 {
+ 	arm,psci-suspend-param = <0x41001244>;
+ 	entry-latency-us = <3638>;
