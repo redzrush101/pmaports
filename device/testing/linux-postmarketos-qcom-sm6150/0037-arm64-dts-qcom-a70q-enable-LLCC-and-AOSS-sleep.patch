@@ -1,0 +1,36 @@
+From ba1eec9157949ecc1eb223144be12e3583f32f91 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 14 Sep 2026 12:36:53 +0200
+Subject: [PATCH] arm64: dts: qcom: a70q: enable LLCC and AOSS sleep
+
+CPU rail collapse, cluster L3 collapse and the corrected CX-retention state have been validated independently with live residency, last-man behavior and s2idle resume. Enable the A70 firmware-derived LLCC-off/AOSS-sleep state for the final deep cluster-idle stage.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 1057b5375..020b92d78 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -276,8 +276,8 @@ &venus_opp_table {
+ 
+ /*
+  * Match the cluster modes and latency ordering used by the A70 firmware.
+- * CPU, rail and L3 power collapse have passed staged validation. Enable CX
+- * retention next; keep LLCC/AOSS sleep disabled until CX is proven.
++ * CPU, rail, L3 power collapse and CX retention have passed staged validation.
++ * Enable the deepest LLCC-off/AOSS-sleep state for final validation.
+  */
+ &cluster_sleep_1 {
+ 	arm,psci-suspend-param = <0x41001244>;
+@@ -287,8 +287,6 @@ &cluster_sleep_1 {
+ &cluster_sleep_2 {
+ 	arm,psci-suspend-param = <0x4100b244>;
+ 	entry-latency-us = <3263>;
+-
+-	status = "disabled";
+ };
+ 
+ &apps_rsc {
