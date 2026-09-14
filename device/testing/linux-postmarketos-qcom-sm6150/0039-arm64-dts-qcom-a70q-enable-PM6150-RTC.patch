@@ -1,0 +1,27 @@
+From ce5a6ad36c61afb7ad70c26bd6eb0d1165e6b8ef Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 14 Sep 2026 21:05:55 +0200
+Subject: [PATCH] arm64: dts: qcom: a70q: enable PM6150 RTC
+
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 020b92d78..50124f8f1 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -449,6 +449,10 @@ &pm6150_resin {
+ 	status = "okay";
+ };
+ 
++&pm6150_rtc {
++	status = "okay";
++};
++
+ &pm6150_gpios {
+ 	panel_enable_default: panel-enable-default-state {
+ 		pins = "gpio6";
+-- 
+2.55.0
+
