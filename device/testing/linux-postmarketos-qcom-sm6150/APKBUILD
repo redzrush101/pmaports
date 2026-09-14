@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=5
+pkgrel=6
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -71,6 +71,7 @@ source="
 	0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
 	0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
 	0032-arm64-dts-qcom-a70q-enable-CPU-rail-power-collapse.patch
+	0033-arm64-dts-qcom-a70q-enable-cluster-L3-power-collapse.patch
 	config-$_flavor.aarch64
 "
 builddir="$srcdir/linux-$_commit"
@@ -141,5 +142,6 @@ cb0600b29367f12e8276a5f3b2cc3332186632fdfe97f774f048609373255566fc6a23ef7c9fe347
 30b5592a1b4641f9dffd23bcd7d62f3bbd294789b9c2f17741b5bbe67aae3c7354a5b5c8889642c8a61ba743068be7a1b150b44f8ec1f558e26abf791f485b0e  0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
 c056dc9469e9a48cadab79dfe2a4ead1a3ac92ec8936b06eb8d8f6d28315a77e3e21fbc1c3a6cf4c671aa128899b82e737c5494c7b76378fb877a49507a69d06  0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
 a5d8eede87d8a3c0d2fc401d43a7a738493126f43da51e0e23e5f560cca0da9eba657b4cb0581e8e1d90e2542b69338787a08fcf997c63b99fc21cbe2ef709e6  0032-arm64-dts-qcom-a70q-enable-CPU-rail-power-collapse.patch
+124825243f9560e9459b749b47b28a8670345937f38eeb258e453332fef3034b6e21597179b5f6b3904e76ed1b185d909c44cc7ef43b5ba8466ebbf94a6d000a  0033-arm64-dts-qcom-a70q-enable-cluster-L3-power-collapse.patch
 41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
 "
