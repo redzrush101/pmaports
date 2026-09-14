@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=9
+pkgrel=10
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -76,6 +76,7 @@ source="
 	0035-Reapply-arm64-dts-qcom-a70q-enable-cluster-L3-power-.patch
 	0036-arm64-dts-qcom-a70q-enable-cluster-CX-retention.patch
 	0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
+	0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
 	config-$_flavor.aarch64
 "
 builddir="$srcdir/linux-$_commit"
@@ -151,5 +152,6 @@ a5d8eede87d8a3c0d2fc401d43a7a738493126f43da51e0e23e5f560cca0da9eba657b4cb0581e8e
 b5fe9f631caf910addd4408acfab2b6d93bea35bd7053a7bfc5c8f2c5f839a1bbe0e4c2b82228fe8c02360b0f02895fbaf3b5bc977ba24551196278253a515e8  0035-Reapply-arm64-dts-qcom-a70q-enable-cluster-L3-power-.patch
 67ab909b68871745e7b57536bc87feb5eeea2a994010ab937f212084bb612f3508b39a5526810d00525bb574e4aa16066402dd02a95353cc780371cd55d1998f  0036-arm64-dts-qcom-a70q-enable-cluster-CX-retention.patch
 888ea2c070388607dc85dd65cda822376854cfae4b9cd6db3cd8c4434c1f83ba56099bb8c3b4730db5d3f49a6aec73ba222a1158075be575f3edb7d8b223d297  0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
+3928397295f4ed076838373d0544200768a044d8f9f5c9fee3b2ca13eca5dcd8a20452b5258949e441d591a99c8ba9b8d1447bdf7235fbda2573af6480b8b55f  0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
 41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
 "
