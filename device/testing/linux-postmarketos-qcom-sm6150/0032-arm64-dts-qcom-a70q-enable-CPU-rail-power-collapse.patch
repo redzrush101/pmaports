@@ -1,0 +1,36 @@
+From 747b95d9b6f361d1ba0886186e2a50bd20ce5096 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 14 Sep 2026 11:51:33 +0200
+Subject: [PATCH] arm64: dts: qcom: a70q: enable CPU rail power collapse
+
+The shallower CPU power-collapse state has been validated independently on all eight CPUs, including mixed busy and idle workloads and an s2idle resume. Enable the firmware-described rail power-collapse leaf state while continuing to keep every shared cluster state disabled for separate validation.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index 57624acd4..ef0a95b70 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -276,17 +276,9 @@ &venus_opp_table {
+ 
+ /*
+  * Match the cluster modes and latency ordering used by the A70 firmware.
+- * Enable CPU power collapse first; keep rail and cluster collapse disabled
+- * until the shallower state passes staged validation.
++ * CPU power collapse has passed staged validation. Keep cluster collapse
++ * disabled while validating the per-CPU rail power-collapse state.
+  */
+-&little_cpu_sleep_1 {
+-	status = "disabled";
+-};
+-
+-&big_cpu_sleep_1 {
+-	status = "disabled";
+-};
+-
+ &cluster_sleep_0 {
+ 	status = "disabled";
+ };
