@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=3
+pkgrel=4
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -68,6 +68,8 @@ source="
 	0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
 	0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
 	0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
+	0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
+	0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
 	config-$_flavor.aarch64
 "
 builddir="$srcdir/linux-$_commit"
@@ -135,5 +137,7 @@ c414af53be3dfa6f1369314fea85581634e0258195cc0a1873c0ee4a347bcc088764dbb8b9f7eade
 a3d3682d6f84ae9e03bf7dbfeb6dce97d5296b57135c5b89a1bd76dca8d1a6678e050b1ce7ab8445f45cd48fd17f028e0f859022554a7bc3f59a63d6215ac4a0  0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
 cd86638d2d6ea846068e0aa0c9b53dbad9b1fffb4423cda122ddb81c3ca06fa2d824bdd4ee97eab2fbd625dbadaca3b2f58fb0d2d415f886bc3c83574fb8d8a4  0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
 cb0600b29367f12e8276a5f3b2cc3332186632fdfe97f774f048609373255566fc6a23ef7c9fe347403533ba39036da7354cc9d8d6ef719bf95dbd5576f35ffe  0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
+30b5592a1b4641f9dffd23bcd7d62f3bbd294789b9c2f17741b5bbe67aae3c7354a5b5c8889642c8a61ba743068be7a1b150b44f8ec1f558e26abf791f485b0e  0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
+c056dc9469e9a48cadab79dfe2a4ead1a3ac92ec8936b06eb8d8f6d28315a77e3e21fbc1c3a6cf4c671aa128899b82e737c5494c7b76378fb877a49507a69d06  0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
 41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
 "
