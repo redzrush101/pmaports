@@ -2,7 +2,7 @@ maintainer="Yassin <yassin@nixos.local>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
 pkgver=7.3_rc2_git20260913
-pkgrel=11
+pkgrel=12
 pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -78,6 +78,10 @@ source="
 	0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
 	0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
 	0039-arm64-dts-qcom-a70q-enable-PM6150-RTC.patch
+	0040-iio-adc-qcom-spmi-adc5-add-battery-thermistor-channe.patch
+	0041-power-supply-parse-battery-alert-and-BTI-properties.patch
+	0042-power-supply-qcom-add-PM6150-QG-and-SMB5-support.patch
+	0043-arm64-dts-qcom-a70q-enable-battery-charging-and-USB-.patch
 	config-$_flavor.aarch64
 "
 builddir="$srcdir/linux-$_commit"
@@ -155,5 +159,9 @@ b5fe9f631caf910addd4408acfab2b6d93bea35bd7053a7bfc5c8f2c5f839a1bbe0e4c2b82228fe8
 888ea2c070388607dc85dd65cda822376854cfae4b9cd6db3cd8c4434c1f83ba56099bb8c3b4730db5d3f49a6aec73ba222a1158075be575f3edb7d8b223d297  0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
 3928397295f4ed076838373d0544200768a044d8f9f5c9fee3b2ca13eca5dcd8a20452b5258949e441d591a99c8ba9b8d1447bdf7235fbda2573af6480b8b55f  0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
 0b1ce5ab5c8910afdd0ba621ef1e991126c3b1b824bcf56dbd5e38ce8b2d8c02e35833e677ee0825941596f3d21cd7bee8fb1dd5718925f6bfc929274be7a4af  0039-arm64-dts-qcom-a70q-enable-PM6150-RTC.patch
-41c4747cce78284dd0e27893f18aa1bc492cac9266a84fbe3016562c7a316b74435144f1fcd5f5408780c2c049b40ed684d2157b1bb05a98eb17ff9de1da7efb  config-postmarketos-qcom-sm6150.aarch64
+a3f083674130869cc302bfbbb85f8bbae68e357d510f8ff61c5aced6ac4faa3cfff4e7e856099822cb2a18af51773cd83e12b9a8c88be80039bdb90fc483f214  0040-iio-adc-qcom-spmi-adc5-add-battery-thermistor-channe.patch
+9b9de8260205795ccb42ed1436d46f2d46864793ce4701136a5889c5a1c8ecfaf3b5377152d3e54f933f8f6161bea9d59bb36d120f3d45d33a7aeb1585162607  0041-power-supply-parse-battery-alert-and-BTI-properties.patch
+a330311e35b19b2767f9dd8901c282db207caac527dbfe01e23fffd9b8b56d203c88e6342a0d077ee8d428c2c3f4e2e73b2bcac92f9cf023b43dad281e0a6ddc  0042-power-supply-qcom-add-PM6150-QG-and-SMB5-support.patch
+929940fbc8a30f08eb05b74e11ade3295d98b7c2f0858ec32de0c50b53f6290cd8ffa939259e62675e46b80bf48bf449cf6a47dba5a662c24451498f357828ca  0043-arm64-dts-qcom-a70q-enable-battery-charging-and-USB-.patch
+a2f154aaf64afb6a4dfba853f86555dce8a88f11bbb669aabcc0c2fdbf36c822fb5699ac349f26db2c22b62bfa2a454f01fc8630396fff03c349f5a92e291b73  config-postmarketos-qcom-sm6150.aarch64
 "
