@@ -1,0 +1,32 @@
+From 6c4cb674958974f1736287ff517a888639efb999 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 19:55:55 +0200
+Subject: [PATCH 6/6] arm64: dts: exynos: Add ramoops to r8s
+
+Samsung firmware reserves 32 KiB at 0xeb308000 for persistent logs and
+splits it evenly between crash records and pmsg. Describe the same layout
+with the standard ramoops binding for post-reset diagnostics.
+
+Signed-off-by: Yassin <yassin@users.noreply.github.com>
+---
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+index bfb6fabd459c..e0f2d88cf884 100644
+--- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
++++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+@@ -63,6 +63,13 @@ reserved-memory {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		ramoops@eb308000 {
++			compatible = "ramoops";
++			reg = <0 0xeb308000 0 0x8000>;
++			record-size = <0x4000>;
++			pmsg-size = <0x4000>;
++		};
++
+ 		cont_splash_mem: framebuffer@f1000000 {
+ 			reg = <0 0xf1000000 0 0x13c6800>;
+ 			no-map;
