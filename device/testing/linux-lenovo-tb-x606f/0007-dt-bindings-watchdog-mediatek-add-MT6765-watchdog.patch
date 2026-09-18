@@ -1,0 +1,23 @@
+From a607ac143daa43a4b030e5b4e1c55899f1528e83 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 25 Aug 2026 15:32:25 +0200
+Subject: [PATCH 7/9] dt-bindings: watchdog: mediatek: add MT6765 watchdog
+
+MT6765 requires SoC-specific restart handling in the MediaTek watchdog
+driver. Add its compatible with the existing MT6589 watchdog fallback.
+---
+ Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml b/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
+index 953629cb9..53b895c2f 100644
+--- a/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
+@@ -36,6 +36,7 @@ properties:
+               - mediatek,mt2701-wdt
+               - mediatek,mt6572-wdt
+               - mediatek,mt6582-wdt
++              - mediatek,mt6765-wdt
+               - mediatek,mt6797-wdt
+               - mediatek,mt7622-wdt
+               - mediatek,mt7623-wdt

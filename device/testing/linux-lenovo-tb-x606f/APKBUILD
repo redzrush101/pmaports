@@ -1,0 +1,90 @@
+maintainer=""
+pkgname=linux-lenovo-tb-x606f
+pkgver=7.2_rc3
+pkgrel=0
+pkgdesc="Mainline kernel for Lenovo Tab M10 FHD Plus"
+arch="aarch64"
+_carch="arm64"
+_flavor="lenovo-tb-x606f"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bison
+	elfutils-dev
+	findutils
+	flex
+	linux-headers
+	openssl-dev
+	pahole
+	perl
+	python3
+	zstd
+"
+
+_config="config-$_flavor.$arch"
+_outdir=".output"
+source="
+	$pkgname-$pkgver.tar.gz::https://git.kernel.org/torvalds/t/linux-${pkgver/_/-}.tar.gz
+	0001-dt-bindings-mediatek-describe-MT6765-boot-hardware.patch
+	0002-clk-mediatek-mt6765-add-PMIC-wrapper-clock-and-reset.patch
+	0003-mmc-mtk-sd-add-MT6765-compatibility.patch
+	0004-pinctrl-mediatek-mt6765-map-virtual-PMIC-EINT.patch
+	0005-arm64-dts-mediatek-add-MT6765-SoC.patch
+	0006-arm64-dts-mediatek-add-Lenovo-Tab-M10-FHD-Plus.patch
+	0007-dt-bindings-watchdog-mediatek-add-MT6765-watchdog.patch
+	0008-watchdog-mtk-make-MT6765-reboot-through-TOPRGU.patch
+	0009-arm64-dts-mediatek-use-the-MT6765-watchdog-compatibl.patch
+	$_config
+"
+builddir="$srcdir/linux-${pkgver/_/-}"
+
+prepare() {
+	default_prepare
+	mkdir -p "$_outdir"
+	cp "$srcdir/$_config" "$_outdir/.config"
+	make O="$_outdir" ARCH="$_carch" olddefconfig
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1))-$_flavor" \
+		Image.gz \
+		mediatek/mt8768-lenovo-tb-x606f.dtb \
+		modules
+}
+
+package() {
+	local buildroot="$builddir/$_outdir"
+	local dtbdir="$buildroot/arch/arm64/boot/dts/mediatek"
+
+	install -Dm644 "$buildroot/arch/arm64/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz-$_flavor"
+	install -Dm644 "$dtbdir/mt8768-lenovo-tb-x606f.dtb" \
+		"$pkgdir/boot/dtbs/mediatek/mt8768-lenovo-tb-x606f.dtb"
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		INSTALL_MOD_PATH="$pkgdir/usr" \
+		INSTALL_MOD_STRIP=1 \
+		modules_install
+	rm -f "$pkgdir"/usr/lib/modules/*/build \
+		"$pkgdir"/usr/lib/modules/*/source
+
+	install -D "$buildroot/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+
+sha512sums="
+3a065b9006efbf42aca12defd9206496581964a7e841f77564d2bf2bea40b0908cca75e00eb229ff9a7405b8da28ac7590f9d2e95d7f2d235120bc7220df4355  linux-lenovo-tb-x606f-7.2_rc3.tar.gz
+bb99f04cfa23ac92a90eaab70d7ea6cc834060df8f9902ca657dea45aa0a39fc4a7af59bef307be9472f9652bcc330b53170eb6adb0b6a538ff26bb60784ff21  0001-dt-bindings-mediatek-describe-MT6765-boot-hardware.patch
+f78add3c3548f91aaf973eb09ceed0e5f7f984b984a2956f61fe32fae83c312a7ff2be6b46ed467ffca20fb99d0393df5b56497ba8240fb8218b86483f19108b  0002-clk-mediatek-mt6765-add-PMIC-wrapper-clock-and-reset.patch
+361c1dbe425337e4e8489c1f4dcfd12cf040709520506e6960a1b532a66a0f5ccbb6ed6bb19e93dafc9daf05f334693ec00d14912648010039f103dc602e71be  0003-mmc-mtk-sd-add-MT6765-compatibility.patch
+510aa2a23a5ceae5134570e1c0eb21e2ad373da657fb8437a151c8762e39a1e1e4f01039776fa5bb514b0be5fbe011a5fb3b4e0e8afd8413f35ade1a2a1057e8  0004-pinctrl-mediatek-mt6765-map-virtual-PMIC-EINT.patch
+4cab817f0162375b1bd9e1c5326dd7ed58800135dc59217722c2e14993bd6cb3eb76fa8d8f992f3708ba064fb35c58dd72c893a3dc0bf52eddee3343bc889d81  0005-arm64-dts-mediatek-add-MT6765-SoC.patch
+665941ef5f2ecf8b5f2ba438d758372042164e4d6b71a808919b686ae3368a18945934b1a8cffe3fdc7fcaf3691f23dbe36ca45d467e8ef1cef082a793911df0  0006-arm64-dts-mediatek-add-Lenovo-Tab-M10-FHD-Plus.patch
+ee5573ba0f519d2f145348e0dcc27e765421b88eed7f05f7b44c2339b21a54d4e24d5cdffdb02f38275c783f1aeb59ebd77764ff292e913ed781837d52730ee8  0007-dt-bindings-watchdog-mediatek-add-MT6765-watchdog.patch
+4bfde37495a4f66c2f861309cc85e3a96415965c0bae36fc3af77c026c88c63d28fc6523ef5e5faea4ae82022791e52fca0a8bbf599e18ce165e1ad3edac8eb1  0008-watchdog-mtk-make-MT6765-reboot-through-TOPRGU.patch
+2208673263136cae6bc927a94f4a907e67a8dfd53cabf3d64ee9fab206a582a78a6ea7476bf28f776c397c9fdee354d88ce81c602bdc1c5b2464fa487ca03597  0009-arm64-dts-mediatek-use-the-MT6765-watchdog-compatibl.patch
+1dd1e3a775f1cb0f7640e5d9f435fd71c00c6f4540be1285d302b2ee15b7cc1ac4fc356ea70cdb86ab55dd4f1c9533bd7dbd3e88675872c9d53519f54349bc6d  config-lenovo-tb-x606f.aarch64
+"
