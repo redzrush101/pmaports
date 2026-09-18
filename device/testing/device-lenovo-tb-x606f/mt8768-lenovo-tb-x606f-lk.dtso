@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+/* Stock Little Kernel requires these legacy nodes before booting Linux. */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	fragment@0 {
+		target-path = "/";
+
+		__overlay__ {
+			#address-cells = <2>;
+			#size-cells = <2>;
+
+			chosen {
+				bootargs = "";
+			};
+
+			scp@10500000 {
+				compatible = "mediatek,scp";
+				reg = <0 0x10500000 0 0x40000>,
+				      <0 0x105c0000 0 0x3000>,
+				      <0 0x105c4000 0 0x1000>,
+				      <0 0x105d4000 0 0x6000>;
+				interrupts = <0 192 4>;
+				core_1 = "enable";
+				scp_sramSize = <0x40000>;
+			};
+		};
+	};
+};

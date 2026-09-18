@@ -1,0 +1,48 @@
+maintainer=""
+pkgname=device-lenovo-tb-x606f
+pkgdesc="Lenovo Tab M10 FHD Plus"
+pkgver=1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-lenovo-tb-x606f
+	mkbootimg
+	postmarketos-base
+"
+makedepends="
+	android-tools-mkdtboimg
+	devicepkg-dev
+	dtc
+"
+source="
+	deviceinfo
+	kernel-cmdline.conf
+	mt8768-lenovo-tb-x606f-lk.dtso
+"
+
+build() {
+	devicepkg_build "$startdir" "$pkgname"
+
+	# interrupt-parent is inherited from the base DT after LK applies the overlay.
+	dtc -@ -Wno-chosen_node_is_root -Wno-interrupts_property \
+		-I dts -O dtb \
+		-o "$srcdir/mt8768-lenovo-tb-x606f-lk.dtbo" \
+		"$srcdir/mt8768-lenovo-tb-x606f-lk.dtso"
+	mkdtboimg create "$srcdir/dtbo.img" \
+		"$srcdir/mt8768-lenovo-tb-x606f-lk.dtbo"
+}
+
+package() {
+	devicepkg_package "$startdir" "$pkgname"
+
+	install -Dm644 "$srcdir/dtbo.img" "$pkgdir/boot/dtbo.img"
+}
+
+sha512sums="
+06e414338eb9e5d15a82b195c561d19ad491d5945d9bc28bd53e16ec06bd2e521373809e3ca9d8fbc232db1319699bb7715225044a832e90d5cb5ac30988ef4b  deviceinfo
+86db26c1191696fe43eb1475ec1914599e1487b6c5e59b19b5a8b7b9d9773acbadd502f9e5a2492af95194500231502f030165a9d9494fcbe8020ea7c5bd5f3e  kernel-cmdline.conf
+69427cb09a7deff21582c23a8f0f7cd1a2a2bb7c5bd64a61ad54a65056b87fb2b3455aabe55ff04bb68372e62825a0efe61702aa22a993834a93b163cf14c5e6  mt8768-lenovo-tb-x606f-lk.dtso
+"
