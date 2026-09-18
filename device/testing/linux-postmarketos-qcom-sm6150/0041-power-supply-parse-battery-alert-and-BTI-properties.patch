@@ -1,0 +1,86 @@
+From b78cfa685d460952e5380e1a24e922e279746f3a Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 15 Sep 2026 18:55:41 +0200
+Subject: [PATCH 41/43] power: supply: parse battery alert and BTI properties
+
+---
+ .../bindings/power/supply/battery.yaml        | 31 +++++++++++++++++++
+ drivers/power/supply/power_supply_core.c      | 18 +++++++++--
+ 2 files changed, 46 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/power/supply/battery.yaml b/Documentation/devicetree/bindings/power/supply/battery.yaml
+index 8ebf05d94..2b59f8327 100644
+--- a/Documentation/devicetree/bindings/power/supply/battery.yaml
++++ b/Documentation/devicetree/bindings/power/supply/battery.yaml
+@@ -90,6 +90,37 @@ properties:
+   constant-charge-voltage-max-microvolt:
+     description: maximum constant input voltage
+ 
++  alert-low-temp-charge-current-microamp:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: maximum charging current while the battery temperature is
++      between the minimum operating temperature and the low alert temperature
++
++  alert-low-temp-charge-voltage-microvolt:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: maximum charging voltage while the battery temperature is
++      between the minimum operating temperature and the low alert temperature
++
++  alert-high-temp-charge-current-microamp:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: maximum charging current while the battery temperature is
++      between the high alert temperature and the maximum operating temperature
++
++  alert-high-temp-charge-voltage-microvolt:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: maximum charging voltage while the battery temperature is
++      between the high alert temperature and the maximum operating temperature
++
++  bti-resistance-ohms:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    description: nominal Battery Type Indicator resistance in ohms
++
++  bti-resistance-tolerance-percent:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 100
++    description: allowed deviation from the nominal Battery Type Indicator
++      resistance, in percent
++
+   factory-internal-resistance-micro-ohms:
+     description: battery factory internal resistance
+ 
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 47e307709..9f987dc9b 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -850,11 +850,23 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 	fwnode_property_read_u32(fwnode, "over-voltage-threshold-microvolt",
+ 			     &info->overvoltage_limit_uv);
+ 	fwnode_property_read_u32(fwnode, "constant-charge-current-max-microamp",
+-			     &info->constant_charge_current_max_ua);
++				     &info->constant_charge_current_max_ua);
+ 	fwnode_property_read_u32(fwnode, "constant-charge-voltage-max-microvolt",
+-			     &info->constant_charge_voltage_max_uv);
++				     &info->constant_charge_voltage_max_uv);
++	fwnode_property_read_u32(fwnode, "alert-low-temp-charge-current-microamp",
++				     &info->alert_low_temp_charge_current_ua);
++	fwnode_property_read_u32(fwnode, "alert-low-temp-charge-voltage-microvolt",
++				     &info->alert_low_temp_charge_voltage_uv);
++	fwnode_property_read_u32(fwnode, "alert-high-temp-charge-current-microamp",
++				     &info->alert_high_temp_charge_current_ua);
++	fwnode_property_read_u32(fwnode, "alert-high-temp-charge-voltage-microvolt",
++				     &info->alert_high_temp_charge_voltage_uv);
++	fwnode_property_read_u32(fwnode, "bti-resistance-ohms",
++				     &info->bti_resistance_ohm);
++	fwnode_property_read_u32(fwnode, "bti-resistance-tolerance-percent",
++				     &info->bti_resistance_tolerance);
+ 	fwnode_property_read_u32(fwnode, "factory-internal-resistance-micro-ohms",
+-			     &info->factory_internal_resistance_uohm);
++				     &info->factory_internal_resistance_uohm);
+ 
+ 	if (!fwnode_property_read_u32_array(fwnode, "ambient-celsius",
+ 					    min_max, ARRAY_SIZE(min_max))) {
+-- 
+2.55.0
+

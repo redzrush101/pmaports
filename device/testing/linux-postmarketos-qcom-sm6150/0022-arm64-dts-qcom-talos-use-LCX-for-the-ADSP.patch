@@ -1,0 +1,27 @@
+From d316856fe682e5396493258abd3311b3b50a6c42 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Wed, 9 Sep 2026 23:04:18 +0200
+Subject: [PATCH 22/29] arm64: dts: qcom: talos: use LCX for the ADSP
+
+The QCS615 ADSP logical VDD_CX supply is backed by lcx.lvl.
+
+Vote LCX while starting the remote processor, matching downstream.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/talos.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
+index eedfdce3c..42ea1dfd7 100644
+--- a/arch/arm64/boot/dts/qcom/talos.dtsi
++++ b/arch/arm64/boot/dts/qcom/talos.dtsi
+@@ -5246,7 +5246,7 @@ remoteproc_adsp: remoteproc@62400000 {
+ 			clocks = <&rpmhcc RPMH_CXO_CLK>;
+ 			clock-names = "xo";
+ 
+-			power-domains = <&rpmhpd RPMHPD_CX>;
++			power-domains = <&rpmhpd RPMHPD_LCX>;
+ 			power-domain-names = "cx";
+ 
+ 			memory-region = <&rproc_adsp_mem>;

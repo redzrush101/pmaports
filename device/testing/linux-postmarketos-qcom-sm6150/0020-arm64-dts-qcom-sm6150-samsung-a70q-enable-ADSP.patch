@@ -1,0 +1,31 @@
+From c2fddac23b43cbef557b3fd30e5168af2ab227a6 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Sat, 12 Sep 2026 13:42:40 +0200
+Subject: [PATCH 20/29] arm64: dts: qcom: sm6150-samsung-a70q: enable ADSP
+
+Enable the Talos PAS, SMP2P, GLINK, FastRPC and GPR topology on the
+Galaxy A70. Select the board firmware signed for Samsung production
+devices instead of the generic Qualcomm test-signed image.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+index f1451c599..92a10833c 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
++++ b/arch/arm64/boot/dts/qcom/sm6150-samsung-a70q.dts
+@@ -420,6 +420,12 @@ &qupv3_id_0 {
+ 	status = "okay";
+ };
+ 
++&remoteproc_adsp {
++	firmware-name = "qcom/sm6150/a70q/adsp.mdt";
++
++	status = "okay";
++};
++
+ &tlmm {
+ 	/* These pins are assigned to secure-world peripherals by the firmware. */
+ 	gpio-reserved-ranges = <0 4>, <6 4>, <37 2>;

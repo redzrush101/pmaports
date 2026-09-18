@@ -1,0 +1,163 @@
+maintainer="Yassin <yassin@nixos.local>"
+_flavor="postmarketos-qcom-sm6150"
+pkgname="linux-$_flavor"
+pkgver=7.3_rc2_git20260913
+pkgrel=0
+pkgdesc="Mainline kernel for Qualcomm SM6150 devices"
+arch="aarch64"
+_carch="arm64"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="
+	!check
+	!strip
+	!tracedeps
+	pmb:cross-native
+"
+makedepends="
+	bash
+	bison
+	clang
+	diffutils
+	elfutils-dev
+	findutils
+	flex
+	kmod
+	linux-headers
+	lld
+	llvm
+	openssl-dev
+	pahole
+	perl
+	postmarketos-installkernel
+	python3
+	sed
+	zstd
+"
+
+_commit="d681d7ef617ef83d6a4de36e5cb4418ef602e122"
+
+source="
+	$pkgname-$_commit.tar.gz::https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/snapshot/linux-$_commit.tar.gz
+	0001-dt-bindings-arm-qcom-add-Samsung-Galaxy-A70.patch
+	0002-arm64-dts-qcom-add-Samsung-Galaxy-A70.patch
+	0003-dt-bindings-input-touchscreen-imagis-add-compatible-.patch
+	0004-Input-imagis-do-not-report-coordinates-of-released-c.patch
+	0005-Input-imagis-replace-the-protocol_b-flag-with-a-prot.patch
+	0006-Input-imagis-add-support-for-the-IST40xx-touch-repor.patch
+	0007-Input-imagis-add-support-for-IST4050.patch
+	0008-Input-imagis-set-I2C-client-data.patch
+	0009-arm64-dts-qcom-sm6150-samsung-a70q-enable-touchscree.patch
+	0010-usb-dwc3-qcom-restore-UTMI-clock-selection-on-resume.patch
+	0011-drm-panel-samsung-s6e3fc2x01-add-per-panel-descripto.patch
+	0012-dt-bindings-display-panel-add-Samsung-AMS670TA01.patch
+	0013-drm-panel-samsung-s6e3fc2x01-preserve-DSI-mode-flags.patch
+	0014-drm-panel-samsung-s6e3fc2x01-add-AMS670TA01-support.patch
+	0015-dt-bindings-phy-qcom-dsi-phy-14nm-allow-vdda-supply.patch
+	0016-arm64-dts-qcom-sm6150-samsung-a70q-enable-display.patch
+	0017-drm-msm-mark-fbdev-framebuffer-as-virtual-memory.patch
+	0018-clk-qcom-dispcc-qcs615-enable-DSI-parents-for-rate-c.patch
+	0019-arm64-dts-qcom-sm6150-samsung-a70q-correct-CPU-OPPs.patch
+	0020-arm64-dts-qcom-sm6150-samsung-a70q-enable-ADSP.patch
+	0021-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
+	0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
+	0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
+	0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
+	0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-Galaxy-A70.patch
+	0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
+	0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
+	0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
+	0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
+	0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
+	0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
+	0032-arm64-dts-qcom-a70q-enable-CPU-rail-power-collapse.patch
+	0033-arm64-dts-qcom-a70q-enable-cluster-L3-power-collapse.patch
+	0036-arm64-dts-qcom-a70q-enable-cluster-CX-retention.patch
+	0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
+	0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
+	0039-arm64-dts-qcom-a70q-enable-PM6150-RTC.patch
+	0040-iio-adc-qcom-spmi-adc5-add-battery-thermistor-channe.patch
+	0041-power-supply-parse-battery-alert-and-BTI-properties.patch
+	0042-power-supply-qcom-add-PM6150-QG-and-SMB5-support.patch
+	0043-arm64-dts-qcom-a70q-enable-battery-charging-and-USB-.patch
+	config-$_flavor.aarch64
+"
+builddir="$srcdir/linux-$_commit"
+
+prepare() {
+	default_prepare
+	cp "$srcdir/config-$_flavor.aarch64" .config
+}
+
+build() {
+	unset LDFLAGS
+	make ARCH="$_carch" LLVM=1 \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1))-$_flavor" \
+		Image.gz modules qcom/sm6150-samsung-a70q.dtb
+}
+
+package() {
+	# Samsung ABL expects a raw compressed arm64 image, not EFI zboot.
+	install -Dm644 "$builddir/arch/$_carch/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz"
+
+	make modules_install \
+		ARCH="$_carch" \
+		LLVM=1 \
+		INSTALL_MOD_PATH="$pkgdir/usr" \
+		INSTALL_MOD_STRIP=1
+
+	install -Dm644 \
+		"$builddir/arch/$_carch/boot/dts/qcom/sm6150-samsung-a70q.dtb" \
+		"$pkgdir/boot/dtbs/qcom/sm6150-samsung-a70q.dtb"
+	rm -f "$pkgdir"/usr/lib/modules/*/build "$pkgdir"/usr/lib/modules/*/source
+
+	install -Dm644 "$builddir/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+
+sha512sums="
+f2fd13ca169f51c6e36078abced84748fd16932f6230cf67ad0a5450a19f6016db0cde5bd3000e699b10ae1118ea06bee4380606a1c7ae635f82ea96672c61cc  linux-postmarketos-qcom-sm6150-d681d7ef617ef83d6a4de36e5cb4418ef602e122.tar.gz
+0fb9c05a1cbc8e9d69a4e4caa11c63eee1d6000b69ec8b198857e428494d24532e5e0a72eb4ff6f960fc38ec18e7382bd586c92819afcdbcd4c5a117b2acf5bf  0001-dt-bindings-arm-qcom-add-Samsung-Galaxy-A70.patch
+0afc74248fd67db93c2ed0deea78adf40706f261f10dad6d5eddc8e945984c099edc0b92e38a6cf91645bad4fe460ab6d64c5af40feb9c4c7dc2df241fe64ad2  0002-arm64-dts-qcom-add-Samsung-Galaxy-A70.patch
+083951818b7c8edbd74dd62b4874ab444afd3d7c2b693be40ecadf078f924294d6ef66fc8b43c46447c644304a2dc003322409e1b4cd538f36c20ddb1d17a3b0  0003-dt-bindings-input-touchscreen-imagis-add-compatible-.patch
+f0f54658b330a9e1934c02a2497672182cb123fe5091320ec1272cfd07f07449e8e0fe5bfcb2a710a3cf8302215b59bb47d53c89b26609f153caaa9d133ae19a  0004-Input-imagis-do-not-report-coordinates-of-released-c.patch
+8d58a9221806f3f2095b2d47b94f3774001ea3b6cedd7da1afbe68046ed511045290e78a71614d6d84d03a3853f137a1d5e276c9d5052801a0fccbe6b0064a2e  0005-Input-imagis-replace-the-protocol_b-flag-with-a-prot.patch
+ed78aae02799f46babd3a0b9fb301abb28b9afa74c773d605486f3235efb607562b0e6b9b0aaa45bf1b879d20cebbc764623841200cc25dac186265d20830e1e  0006-Input-imagis-add-support-for-the-IST40xx-touch-repor.patch
+4fb16012f65d795757a445c0a860f28e5774dfd91f0679959910e5e36ae3c44b01aeffdfb72e65b5eac2586941c19c9dc70aaeef13f7dab2c95c1d7c1c7ceb8c  0007-Input-imagis-add-support-for-IST4050.patch
+c407df92c3f36fd6b5852d2538ddf1a9437f02ee3b64b1e5317ff944f830009f1aef034d4d26b333c564876c049f82cbf78ddf9b2d18e1e079f9c83e9588894f  0008-Input-imagis-set-I2C-client-data.patch
+f89708d70db421e7e6baab66b41d3e0429da8b74b36f50ea2b1e5533d89f37fe9956bed43e7b9e6156fea555b1e82e91a579ea34fce42ceb33895ee96a3bbcc3  0009-arm64-dts-qcom-sm6150-samsung-a70q-enable-touchscree.patch
+a8e8eef09f1f9a080de53185972ba3c23028909c62e8b720a5bcd7d2ac69f5b14c1127ee9e39f1087183eb03353a462f5a4206f11e2500ba17e66ec8d27b562c  0010-usb-dwc3-qcom-restore-UTMI-clock-selection-on-resume.patch
+9a4183e38d3585e7c20d915d4ac537b5ad0e3bdf53511d60f879ead316c095bc424affe8566a3647b0b41139c2b75ad6207d99c9831da8cf1d7b1afff5aa014d  0011-drm-panel-samsung-s6e3fc2x01-add-per-panel-descripto.patch
+3d69c4412562170c2163e93b2d44ce326107766c87aecbbe29d0a0c289f52e248dff4469103c828d7f67f3d936caf25dff31378c5106e65c9fe470aa0f991146  0012-dt-bindings-display-panel-add-Samsung-AMS670TA01.patch
+b486ec54aedcac435e39c00a9d3f3e9343914714c16a5f459d2e6573cba83388c6efc6d6e44cb8cd09d547219d1a4721fe273e409e932dbcb362006dc1b112a2  0013-drm-panel-samsung-s6e3fc2x01-preserve-DSI-mode-flags.patch
+cf0f4cb6af2477b0bd4f1fa9db1d67c8d5464a28512d8530c0a2e9460473748740282dc8ed4fc42bf06473f620adda532af99a7d2d8effa6a1fab180eea77d6a  0014-drm-panel-samsung-s6e3fc2x01-add-AMS670TA01-support.patch
+a7ec54e13198837836af4414655749fb81b7ef37a40fad7cddd9ecaa4a24760f76db422c961a5994805f988ad268fe259ce4c3d47a5a6a01c1e945abb5e516e1  0015-dt-bindings-phy-qcom-dsi-phy-14nm-allow-vdda-supply.patch
+fa257d63badcf6b422afd993ffd51518689219a620e3f98eed7f674d641daeef6ca35919aac95dc154dd0b841a37c53c76c666f6a3eb7194f3e7a99fae5be23a  0016-arm64-dts-qcom-sm6150-samsung-a70q-enable-display.patch
+bf93eea32aa437272c16ab6f76666c733a83c208abfbf8e2bd0cf68ce76276a6e876263081a81665884005e4ff01804b6089b187dfa63c908b8a18eaaf843091  0017-drm-msm-mark-fbdev-framebuffer-as-virtual-memory.patch
+bbdfd818bef580d568e3442f8cd4ca38c81bf595bd637f10fc2c897a0e4631ec680cde53ad1b3382f5f18cbf2c9c360780c32c91bce58d9b26f930a922753f22  0018-clk-qcom-dispcc-qcs615-enable-DSI-parents-for-rate-c.patch
+04e56823d9ce1f75f0cd448fdad0adde322110f803deb8018ed9a98b774887bf5f77448069c8bb77fc2edfafabaea53a7facf113bcc50782f0c59b4f5a0b8699  0019-arm64-dts-qcom-sm6150-samsung-a70q-correct-CPU-OPPs.patch
+ad4cc7fa3fa09b4b9a2cba7691a33f92b3d348f4440f5cdb12697811388e32cf2b71d7eb18f3beffc6891692f4286645e75a6b905140277a6362b60c3555deaf  0020-arm64-dts-qcom-sm6150-samsung-a70q-enable-ADSP.patch
+3a4c882ab445ee58ee40d9067638f625c39d81f1378f1bd415785da67fcdb1ec14f86e87d901e1ac8d11bc61efcb3b5bc0bebefa8924598b3a8b6fbf017dd3a8  0021-pmdomain-qcom-rpmhpd-add-QCS615-LCX.patch
+f03b1aefb54bc259c230c63086009fbf12d9533327786a1df6a233be35995d6ab0c4bf17ae73e30888bad91672fb742504980906709664d9372f0740e1e6e2a7  0022-arm64-dts-qcom-talos-use-LCX-for-the-ADSP.patch
+27601a90ebf56782d4cef1c1affd4a1dbe3a361d22ddb8bf60f056a71588d322c2aab6ebf0b8883b4e86f0c420dc580c23cc514bb0ff087c4b4b86f5b560e182  0023-iommu-arm-smmu-qcom-use-identity-domain-for-SM6150-M.patch
+8ee2df49e4349746a851c9630674f2628fc517802f971c341a913ccaa34c20c1c4acf2cb25bca16f925146f2bcd56fe6d359d66a0dccabf5c1178aa97700b8c5  0024-arm64-dts-qcom-talos-add-SCM-interconnect.patch
+c414af53be3dfa6f1369314fea85581634e0258195cc0a1873c0ee4a347bcc088764dbb8b9f7eadef00fcda472a13f27c3233e1bdbccc615f52ba0590bb75c34  0025-firmware-qcom-tzmem-disable-SHM-Bridge-on-Galaxy-A70.patch
+7ab85316827956a319fa1945b6febf801f6cc9267cb6951b00b5c0aa9cba6fa3852ef2af7c47a1431329c2708450e74b961e55f80a0b1e29c2ca2bb17af50b9a  0026-arm64-dts-qcom-sm6150-samsung-a70q-enable-GPU.patch
+a3d3682d6f84ae9e03bf7dbfeb6dce97d5296b57135c5b89a1bd76dca8d1a6678e050b1ce7ab8445f45cd48fd17f028e0f859022554a7bc3f59a63d6215ac4a0  0027-arm64-dts-qcom-sm6150-samsung-a70q-enable-Venus.patch
+cd86638d2d6ea846068e0aa0c9b53dbad9b1fffb4423cda122ddb81c3ca06fa2d824bdd4ee97eab2fbd625dbadaca3b2f58fb0d2d415f886bc3c83574fb8d8a4  0028-drm-msm-dpu-recover-from-missed-command-mode-CTL_STA.patch
+cb0600b29367f12e8276a5f3b2cc3332186632fdfe97f774f048609373255566fc6a23ef7c9fe347403533ba39036da7354cc9d8d6ef719bf95dbd5576f35ffe  0029-arm64-dts-qcom-a70q-isolate-A1-NoC-clock-workaround.patch
+30b5592a1b4641f9dffd23bcd7d62f3bbd294789b9c2f17741b5bbe67aae3c7354a5b5c8889642c8a61ba743068be7a1b150b44f8ec1f558e26abf791f485b0e  0030-arm64-dts-qcom-a70q-correct-cluster-idle-states.patch
+c056dc9469e9a48cadab79dfe2a4ead1a3ac92ec8936b06eb8d8f6d28315a77e3e21fbc1c3a6cf4c671aa128899b82e737c5494c7b76378fb877a49507a69d06  0031-arm64-dts-qcom-a70q-enable-CPU-power-collapse.patch
+a5d8eede87d8a3c0d2fc401d43a7a738493126f43da51e0e23e5f560cca0da9eba657b4cb0581e8e1d90e2542b69338787a08fcf997c63b99fc21cbe2ef709e6  0032-arm64-dts-qcom-a70q-enable-CPU-rail-power-collapse.patch
+124825243f9560e9459b749b47b28a8670345937f38eeb258e453332fef3034b6e21597179b5f6b3904e76ed1b185d909c44cc7ef43b5ba8466ebbf94a6d000a  0033-arm64-dts-qcom-a70q-enable-cluster-L3-power-collapse.patch
+67ab909b68871745e7b57536bc87feb5eeea2a994010ab937f212084bb612f3508b39a5526810d00525bb574e4aa16066402dd02a95353cc780371cd55d1998f  0036-arm64-dts-qcom-a70q-enable-cluster-CX-retention.patch
+888ea2c070388607dc85dd65cda822376854cfae4b9cd6db3cd8c4434c1f83ba56099bb8c3b4730db5d3f49a6aec73ba222a1158075be575f3edb7d8b223d297  0037-arm64-dts-qcom-a70q-enable-LLCC-and-AOSS-sleep.patch
+3928397295f4ed076838373d0544200768a044d8f9f5c9fee3b2ca13eca5dcd8a20452b5258949e441d591a99c8ba9b8d1447bdf7235fbda2573af6480b8b55f  0038-usb-dwc3-suspend-USB2-PHY-in-peripheral-mode.patch
+0b1ce5ab5c8910afdd0ba621ef1e991126c3b1b824bcf56dbd5e38ce8b2d8c02e35833e677ee0825941596f3d21cd7bee8fb1dd5718925f6bfc929274be7a4af  0039-arm64-dts-qcom-a70q-enable-PM6150-RTC.patch
+a3f083674130869cc302bfbbb85f8bbae68e357d510f8ff61c5aced6ac4faa3cfff4e7e856099822cb2a18af51773cd83e12b9a8c88be80039bdb90fc483f214  0040-iio-adc-qcom-spmi-adc5-add-battery-thermistor-channe.patch
+9b9de8260205795ccb42ed1436d46f2d46864793ce4701136a5889c5a1c8ecfaf3b5377152d3e54f933f8f6161bea9d59bb36d120f3d45d33a7aeb1585162607  0041-power-supply-parse-battery-alert-and-BTI-properties.patch
+a330311e35b19b2767f9dd8901c282db207caac527dbfe01e23fffd9b8b56d203c88e6342a0d077ee8d428c2c3f4e2e73b2bcac92f9cf023b43dad281e0a6ddc  0042-power-supply-qcom-add-PM6150-QG-and-SMB5-support.patch
+929940fbc8a30f08eb05b74e11ade3295d98b7c2f0858ec32de0c50b53f6290cd8ffa939259e62675e46b80bf48bf449cf6a47dba5a662c24451498f357828ca  0043-arm64-dts-qcom-a70q-enable-battery-charging-and-USB-.patch
+a2f154aaf64afb6a4dfba853f86555dce8a88f11bbb669aabcc0c2fdbf36c822fb5699ac349f26db2c22b62bfa2a454f01fc8630396fff03c349f5a92e291b73  config-postmarketos-qcom-sm6150.aarch64
+"

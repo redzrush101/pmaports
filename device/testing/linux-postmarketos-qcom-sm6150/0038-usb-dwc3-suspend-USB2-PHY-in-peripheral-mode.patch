@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Mon, 14 Sep 2026 13:05:44 +0200
+Subject: [PATCH] usb: dwc3: suspend USB2 PHY in peripheral mode
+
+The USB2 PHY suspend workaround for controllers carrying the dis_u2_susphy or dis_enblslpm quirks is currently limited to host mode. In peripheral mode those bits therefore remain clear until core power-off, preventing Qualcomm wrappers from observing the PHY enter L2.
+
+Factor the existing sequence into a helper and invoke it after gadget quiescence for peripheral and OTG-device modes as well. This matches the required ordering: stop gadget traffic, request PHY low power, wait for the transition, then power down the core.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/usb/dwc3/core.c | 37 +++++++++++++++++++++++--------------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index fd5c2cd36..d615c0ad6 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -2539,10 +2539,28 @@ static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+ 	return ret;
+ }
+ 
+-static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
++static void dwc3_suspend_usb2_phy(struct dwc3 *dwc)
+ {
+ 	u32 reg;
+ 	int i;
++
++	if (!dwc->dis_u2_susphy_quirk && !dwc->dis_enblslpm_quirk)
++		return;
++
++	for (i = 0; i < dwc->num_usb2_ports; i++) {
++		reg = dwc3_readl(dwc, DWC3_GUSB2PHYCFG(i));
++		reg |= DWC3_GUSB2PHYCFG_ENBLSLPM |
++		       DWC3_GUSB2PHYCFG_SUSPHY;
++		dwc3_writel(dwc, DWC3_GUSB2PHYCFG(i), reg);
++	}
++
++	/* Give some time for USB2 PHY to suspend. */
++	usleep_range(5000, 6000);
++}
++
++static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
++{
++	int i;
+ 	int ret;
+ 
+ 	if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
+@@ -2566,6 +2584,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 		if (ret)
+ 			return ret;
+ 		synchronize_irq(dwc->irq_gadget);
++		dwc3_suspend_usb2_phy(dwc);
+ 		dwc3_core_exit(dwc);
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_HOST:
+@@ -2575,19 +2594,8 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 			break;
+ 		}
+ 
+-		/* Let controller to suspend HSPHY before PHY driver suspends */
+-		if (dwc->dis_u2_susphy_quirk ||
+-		    dwc->dis_enblslpm_quirk) {
+-			for (i = 0; i < dwc->num_usb2_ports; i++) {
+-				reg = dwc3_readl(dwc, DWC3_GUSB2PHYCFG(i));
+-				reg |=  DWC3_GUSB2PHYCFG_ENBLSLPM |
+-					DWC3_GUSB2PHYCFG_SUSPHY;
+-				dwc3_writel(dwc, DWC3_GUSB2PHYCFG(i), reg);
+-			}
+-
+-			/* Give some time for USB2 PHY to suspend */
+-			usleep_range(5000, 6000);
+-		}
++		/* Let controller suspend HSPHY before PHY driver suspends. */
++		dwc3_suspend_usb2_phy(dwc);
+ 
+ 		for (i = 0; i < dwc->num_usb2_ports; i++)
+ 			phy_pm_runtime_put_sync(dwc->usb2_generic_phy[i]);
+@@ -2604,6 +2612,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 			if (ret)
+ 				return ret;
+ 			synchronize_irq(dwc->irq_gadget);
++			dwc3_suspend_usb2_phy(dwc);
+ 		}
+ 
+ 		dwc3_otg_exit(dwc);

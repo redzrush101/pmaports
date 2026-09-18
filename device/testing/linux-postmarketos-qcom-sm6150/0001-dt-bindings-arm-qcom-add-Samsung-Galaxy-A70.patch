@@ -1,0 +1,38 @@
+From ca323a598ff0a306c56c62d57c979982263d0985 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Sat, 5 Sep 2026 18:51:24 +0200
+Subject: [PATCH 01/29] dt-bindings: arm: qcom: add Samsung Galaxy A70
+
+Add the compatible for the Samsung Galaxy A70, a handset based on the
+Qualcomm SM6150 SoC. Its bootloader also requires the legacy msm-id and
+board-id properties, so allow SM6150 in that schema.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index ff8a35df7..90d3cb764 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -1056,6 +1056,11 @@ properties:
+           - const: qcom,qcs615
+           - const: qcom,sm6150
+ 
++      - items:
++          - enum:
++              - samsung,a70q
++          - const: qcom,sm6150
++
+       - items:
+           - enum:
+               - sony,pdx213
+@@ -1350,6 +1355,7 @@ allOf:
+               - qcom,sm4250
+               - qcom,sm6115
+               - qcom,sm6125
++              - qcom,sm6150
+               - qcom,sm6350
+               - qcom,sm7125
+               - qcom,sm7225

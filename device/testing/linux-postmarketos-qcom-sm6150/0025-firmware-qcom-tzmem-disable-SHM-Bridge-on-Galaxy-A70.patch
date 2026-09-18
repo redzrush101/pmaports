@@ -1,0 +1,26 @@
+From d87bdce46d8dae7d0dfc6a19061f27c62b71fcf2 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Sun, 13 Sep 2026 23:02:29 +0200
+Subject: [PATCH 25/29] firmware: qcom: tzmem: disable SHM Bridge on Galaxy A70
+
+The Galaxy A70 secure firmware reports SHM Bridge support, but its ADSP PAS init-image request subsequently fails with -EINVAL. The working downstream kernel does not enable SHM Bridge.
+
+Use the generic TZ memory backend only on this machine. Other SM6150 and QCS615 devices may ship different secure firmware and should not be blacklisted without independent evidence.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/firmware/qcom/qcom_tzmem.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+index f926c1f64..8bfe4e5e7 100644
+--- a/drivers/firmware/qcom/qcom_tzmem.c
++++ b/drivers/firmware/qcom/qcom_tzmem.c
+@@ -82,6 +82,7 @@ static const char *const qcom_tzmem_blacklist[] = {
+ 	"qcom,sc8180x",
+ 	"qcom,sdm670", /* failure in GPU firmware loading */
+ 	"qcom,sdm845", /* reset in rmtfs memory assignment */
++	"samsung,a70q", /* failure in ADSP firmware loading */
+ 	"qcom,sm7150", /* reset in rmtfs memory assignment */
+ 	"qcom,sm8150", /* reset in rmtfs memory assignment */
+ 	NULL

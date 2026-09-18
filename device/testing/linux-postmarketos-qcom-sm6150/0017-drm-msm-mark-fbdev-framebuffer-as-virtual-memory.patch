@@ -1,0 +1,26 @@
+From 854c037715fac0963f5a5d881fbb3cb17c6ec418 Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@Nixos>
+Date: Tue, 8 Sep 2026 16:38:02 +0200
+Subject: [PATCH 17/29] drm/msm: mark fbdev framebuffer as virtual memory
+
+The MSM fbdev screen buffer is a CPU virtual mapping of a GEM object.
+Mark it as virtual memory so fbcon uses the appropriate software drawing
+helpers.
+
+Signed-off-by: Yassin <yassin@Nixos>
+---
+ drivers/gpu/drm/msm/msm_fbdev.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+index 89ca9da3e..0ff567417 100644
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -163,6 +163,7 @@ int msm_fbdev_driver_fbdev_probe(struct drm_fb_helper *helper,
+ 		ret = PTR_ERR(fbi->screen_buffer);
+ 		goto err_msm_gem_unpin;
+ 	}
++	fbi->flags |= FBINFO_VIRTFB;
+ 	fbi->screen_size = bo->size;
+ 	fbi->fix.smem_start = paddr;
+ 	fbi->fix.smem_len = bo->size;
