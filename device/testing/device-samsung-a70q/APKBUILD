@@ -1,0 +1,51 @@
+# Reference: <https://postmarketos.org/devicepkg>
+maintainer="Yassin <yassin@nixos.local>"
+pkgname=device-samsung-a70q
+pkgver=1
+pkgrel=0
+pkgdesc="Samsung Galaxy A70"
+url="https://postmarketos.org"
+arch="aarch64"
+license="MIT"
+depends="
+	android-tools-mkbootimg
+	firmware-samsung-a70q-adreno
+	firmware-samsung-a70q-adsp
+	firmware-samsung-a70q-venus
+	linux-postmarketos-qcom-sm6150
+	postmarketos-base
+	systemd-boot
+"
+makedepends="
+	android-tools-avbtool
+	android-tools-img2simg
+	devicepkg-dev
+"
+source="deviceinfo kernel-cmdline.conf modules-initfs"
+options="!archcheck !check"
+
+build() {
+	devicepkg_build $startdir $pkgname
+
+	# ABL requires an AVB-valid DTBO image even when no overlays are used.
+	dd if=/dev/zero of="$srcdir/empty-dtbo.img" bs=512 count=1
+	avbtool add_hash_footer \
+		--algorithm NONE \
+		--image "$srcdir/empty-dtbo.img" \
+		--partition_name dtbo \
+		--partition_size 10485760 \
+		--salt 0000000000000000000000000000000000000000000000000000000000000000
+	img2simg "$srcdir/empty-dtbo.img" "$srcdir/dtbo.img"
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+
+	install -Dm644 "$srcdir/dtbo.img" "$pkgdir/boot/dtbo.img"
+}
+
+sha512sums="
+4c71a5479fbc1e530488780b12261067df10ff1d14d8b1d19be6e6c674c01b1047ba26830b3f7a19c8f4fa481af98dd728bbfac40c40e184c44087aef4ca4ba0  deviceinfo
+fc3dac01ac672a18863d4fdb68973ed02a39a51acb3a66145ca13e26f7204f5fb17f05bf732645556a9659a33ebddbb0596358b3c8714eae450cad533a51cdd2  kernel-cmdline.conf
+0c4edf601aeb4b1a04f97517e750cedbcc9a52a5880419810d673e74bf8bb74978c8c6e702dcb1ae731148a8ac0d85b977e58eb00469e5c4b7a664d2c1574746  modules-initfs
+"
