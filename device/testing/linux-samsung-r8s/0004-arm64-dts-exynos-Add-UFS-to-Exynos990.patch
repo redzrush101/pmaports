@@ -1,0 +1,84 @@
+From 34874838a7c55332ed9214a6bc9a93040283509a Mon Sep 17 00:00:00 2001
+From: Yassin <yassin@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 19:55:54 +0200
+Subject: [PATCH 4/6] arm64: dts: exynos: Add UFS to Exynos990
+
+Describe the Exynos990 UFS host, PHY and HSI1 system registers using
+the documented register windows, interrupt, hardware-derived UFS clock and
+existing UFS pin groups. Keep the controller disabled for boards to opt
+in.
+
+Signed-off-by: Yassin <yassin@users.noreply.github.com>
+---
+ arch/arm64/boot/dts/exynos/exynos990.dtsi | 45 +++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+index 8115d581b173..45033b0dc42e 100644
+--- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+@@ -132,6 +132,13 @@ oscclk: clock-osc {
+ 		clock-output-names = "oscclk";
+ 	};
+ 
++	/* CMU_HSI1 is not described yet; this is its UFS output rate. */
++	ufs_core_clock: clock-ufs-core {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <166562500>;
++	};
++
+ 	pmu-a55 {
+ 		compatible = "arm,cortex-a55-pmu";
+ 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+@@ -344,12 +351,50 @@ usbdrd_dwc3: usb@0 {
+ 			};
+ 		};
+ 
++		sysreg_hsi1: syscon@13020000 {
++			compatible = "samsung,exynos990-hsi1-sysreg", "syscon";
++			reg = <0x13020000 0x10000>;
++		};
++
+ 		pinctrl_hsi1: pinctrl@13040000 {
+ 			compatible = "samsung,exynos990-pinctrl";
+ 			reg = <0x13040000 0x1000>;
+ 			interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		ufs_0: ufs@13100000 {
++			compatible = "samsung,exynos990-ufs";
++			reg = <0x13100000 0x200>,
++			      <0x13101100 0x200>,
++			      <0x13180000 0x8000>,
++			      <0x132a0000 0x100>;
++			reg-names = "hci", "vs_hci", "unipro", "ufsp";
++			interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ufs_core_clock>, <&ufs_core_clock>;
++			clock-names = "core_clk", "sclk_unipro_main";
++			dma-coherent;
++			freq-table-hz = <0 0>, <0 0>;
++			pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
++			pinctrl-names = "default";
++			phys = <&ufs_0_phy>;
++			phy-names = "ufs-phy";
++			samsung,sysreg = <&sysreg_hsi1 0x700>;
++
++			status = "disabled";
++		};
++
++		ufs_0_phy: phy@13104000 {
++			compatible = "samsung,exynos990-ufs-phy";
++			reg = <0x13104000 0x3000>;
++			reg-names = "phy-pma";
++			#phy-cells = <0>;
++			clocks = <&oscclk>;
++			clock-names = "ref_clk";
++			samsung,pmu-syscon = <&pmu_system_controller>;
++
++			status = "disabled";
++		};
++
+ 		pinctrl_hsi2: pinctrl@13c30000 {
+ 			compatible = "samsung,exynos990-pinctrl";
+ 			reg = <0x13c30000 0x1000>;
