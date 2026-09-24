@@ -1,0 +1,78 @@
+maintainer="Yassin Rezai <yassinrsocial@proton.me>"
+pkgname=firmware-samsung-a70q
+pkgver=1
+pkgrel=0
+_commit="cf4203b8c73fe1d76edca24098cecc569db81950"
+_linux_firmware_ver=20260110
+pkgdesc="Firmware for the Samsung Galaxy A70"
+url="https://github.com/redzrush101/firmware-samsung-a70q"
+arch="aarch64"
+license="proprietary"
+subpackages="
+	$pkgname-adreno
+	$pkgname-adsp
+	$pkgname-venus
+	"
+options="!archcheck !check !strip !tracedeps pmb:cross-native"
+source="
+	$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz
+	linux-firmware-$_linux_firmware_ver.tar.gz::https://gitlab.com/kernel-firmware/linux-firmware/-/archive/$_linux_firmware_ver/linux-firmware-$_linux_firmware_ver.tar.gz
+	30-initramfs-firmware.files
+"
+builddir="$srcdir/firmware-samsung-a70q-$_commit"
+
+package() {
+	# Parent package is empty; the device package selects the required firmware.
+	mkdir -p "$pkgdir"
+}
+
+adsp() {
+	pkgdesc="ADSP firmware for the Samsung Galaxy A70"
+
+	local _firmware="$subpkgdir/usr/lib/firmware/qcom/sm6150/a70q"
+
+	install -Dm644 \
+		"$builddir"/adsp.mdt \
+		"$builddir"/adsp.b* \
+		"$builddir"/adspr.jsn \
+		"$builddir"/adsps.jsn \
+		"$builddir"/adspua.jsn \
+		-t "$_firmware"
+}
+
+adreno() {
+	pkgdesc="Adreno firmware for the Samsung Galaxy A70"
+
+	local _firmware="$subpkgdir/usr/lib/firmware/qcom"
+	local _linux_firmware="$srcdir/linux-firmware-$_linux_firmware_ver"
+
+	install -Dm644 "$_linux_firmware/LICENSE.qcom" \
+		"$subpkgdir/usr/share/licenses/$subpkgname/LICENSE.qcom"
+	install -Dm644 "$_linux_firmware/qcom/NOTICE.txt" \
+		"$subpkgdir/usr/share/licenses/$subpkgname/NOTICE.txt"
+	install -Dm644 "$_linux_firmware/qcom/a612_rgmu.bin" -t "$_firmware"
+	install -Dm644 "$_linux_firmware/qcom/a630_sqe.fw" -t "$_firmware"
+
+	install -Dm644 \
+		"$builddir"/a612_zap.mdt \
+		"$builddir"/a612_zap.b* \
+		-t "$_firmware/sm6150/a70q"
+
+	install -Dm644 "$srcdir"/30-initramfs-firmware.files \
+		-t "$subpkgdir"/usr/share/mkinitfs/files
+}
+
+venus() {
+	pkgdesc="Venus video firmware for the Samsung Galaxy A70"
+
+	local _firmware="$subpkgdir/usr/lib/firmware/qcom/sm6150/a70q"
+
+	install -Dm644 "$builddir"/venus.mdt "$builddir"/venus.b* \
+		-t "$_firmware"
+}
+
+sha512sums="
+a6394b75a8889c1e01513a622d76697f468b7de08adddfbf49d10e6e5a2d745730a1e49caab5a40d7dcf23293e72c21ed08a15e17b0b9ebf87c1821162c9ef2b  firmware-samsung-a70q-cf4203b8c73fe1d76edca24098cecc569db81950.tar.gz
+b0c39fd52a84f695ff94cda6d93465b5a192ed3a663275a94b4df30e4126643ca2c9d59a3252df6efdb71a2506d607efd70b0871ec188576f34e1f661731db02  linux-firmware-20260110.tar.gz
+ac6c178d6082b9b864d4ace0c40fa7dcb8ce379ced3554ee8299359c9b3fc018e493e6beb86bcb90f85baeb226f1db763f31fee466de77206efb52b31e5430dc  30-initramfs-firmware.files
+"

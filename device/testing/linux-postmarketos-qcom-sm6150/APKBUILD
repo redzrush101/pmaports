@@ -1,0 +1,88 @@
+maintainer="Yassin Rezai <yassinrsocial@proton.me>"
+_flavor="postmarketos-qcom-sm6150"
+pkgname="linux-$_flavor"
+pkgver=7.3_rc4_git20260925
+pkgrel=0
+pkgdesc="Mainline kernel fork for Qualcomm SM6150 devices"
+arch="aarch64"
+_carch="arm64"
+url="https://github.com/redzrush101/linux"
+license="GPL-2.0-only"
+options="
+	!check
+	!strip
+	!tracedeps
+	pmb:cross-native
+"
+makedepends="
+	bash
+	bison
+	clang
+	diffutils
+	elfutils-dev
+	findutils
+	flex
+	kmod
+	linux-headers
+	lld
+	llvm
+	openssl-dev
+	pahole
+	perl
+	python3
+	sed
+	zstd
+"
+
+# linux-next next-20260925 with the SM6150 series (branch a70q/mainline-next)
+_commit="871a34e838009b4fc9bb32a92466888d8fab3e14"
+
+source="
+	linux-$_commit.tar.gz::$url/archive/$_commit.tar.gz
+	config-$_flavor.aarch64
+"
+# A fixed build directory keeps ccache hits across commits: with debug info
+# ccache hashes the working directory.
+builddir="$srcdir/linux"
+
+unpack() {
+	default_unpack
+	mv "$srcdir/linux-$_commit" "$builddir"
+}
+
+prepare() {
+	default_prepare
+	cp "$srcdir/config-$_flavor.aarch64" .config
+}
+
+build() {
+	unset LDFLAGS
+	make ARCH="$_carch" LLVM=1 \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1))-$_flavor" \
+		Image.gz modules qcom/sm6150-samsung-a70q.dtb
+}
+
+package() {
+	# Samsung ABL expects a raw compressed arm64 image, not EFI zboot.
+	install -Dm644 "$builddir/arch/$_carch/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz"
+
+	make modules_install \
+		ARCH="$_carch" \
+		LLVM=1 \
+		INSTALL_MOD_PATH="$pkgdir/usr" \
+		INSTALL_MOD_STRIP=1
+
+	install -Dm644 \
+		"$builddir/arch/$_carch/boot/dts/qcom/sm6150-samsung-a70q.dtb" \
+		"$pkgdir/boot/dtbs/qcom/sm6150-samsung-a70q.dtb"
+	rm -f "$pkgdir"/usr/lib/modules/*/build "$pkgdir"/usr/lib/modules/*/source
+
+	install -Dm644 "$builddir/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+
+sha512sums="
+d0b81f2e0fe5aefc04e49c6adf2e5732a0e5a2cdb0e5b609fcf917ba8c39b9a765e4e75461dbaffccbe940949b5d833be622ab69f34e867ae1b3e9893c4182ec  linux-871a34e838009b4fc9bb32a92466888d8fab3e14.tar.gz
+e21fcd508481bdd40f0ecc8d409ba4ee2185e8bce24e53363d0fa48cca20a45b1e11cddc6c77bf99379ddf54f08256770eb0db606db5f7d399771bedd972e2fd  config-postmarketos-qcom-sm6150.aarch64
+"

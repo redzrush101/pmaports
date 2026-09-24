@@ -1,0 +1,68 @@
+# Reference: <https://postmarketos.org/devicepkg>
+maintainer="Yassin Rezai <yassinrsocial@proton.me>"
+pkgname=device-samsung-a70q
+pkgver=1
+pkgrel=0
+pkgdesc="Samsung Galaxy A70"
+url="https://postmarketos.org"
+arch="aarch64"
+license="MIT"
+depends="
+	alsa-ucm-conf
+	android-tools-mkbootimg
+	firmware-samsung-a70q-adreno
+	firmware-samsung-a70q-adsp
+	firmware-samsung-a70q-venus
+	linux-postmarketos-qcom-sm6150
+	postmarketos-base
+	swclock-offset
+"
+makedepends="
+	android-tools-avbtool
+	android-tools-img2simg
+	devicepkg-dev
+"
+source="
+	deviceinfo
+	kernel-cmdline.conf
+	modules-initfs
+	ucm-a70q.conf
+	ucm-HiFi.conf
+	"
+options="!archcheck !check"
+
+build() {
+	devicepkg_build $startdir $pkgname
+
+	# ABL requires an AVB-valid DTBO image even when no overlays are used.
+	dd if=/dev/zero of="$srcdir/empty-dtbo.img" bs=512 count=1
+	avbtool add_hash_footer \
+		--algorithm NONE \
+		--image "$srcdir/empty-dtbo.img" \
+		--partition_name dtbo \
+		--partition_size 10485760 \
+		--salt 0000000000000000000000000000000000000000000000000000000000000000
+	img2simg "$srcdir/empty-dtbo.img" "$srcdir/dtbo.img"
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+
+	install -Dm644 "$srcdir/dtbo.img" "$pkgdir/boot/dtbo.img"
+
+	install -Dm644 "$srcdir"/ucm-a70q.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/Samsung/a70q/a70q.conf
+	install -Dm644 "$srcdir"/ucm-HiFi.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/Samsung/a70q/HiFi.conf
+	mkdir -p "$pkgdir"/usr/share/alsa/ucm2/conf.d/a70q
+	ln -s ../../Samsung/a70q/a70q.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/conf.d/a70q/a70q.conf
+}
+
+sha512sums="
+ef13a7de1d0e9c304c6a82fde9ef38ce43122b28d24214020dbdc1003b8178d9870397088316629cb8de40d36af7bc80914a0f8e3da66d9df0d925c9292a4b21  deviceinfo
+723ab5dacd245b8198b435e39d8d56e598e3d370c3e96433e2b000d822aa22442da2abac989817b68ba0c4584b5213044687f7c1e52be061286fde607aad80e1  kernel-cmdline.conf
+c3020dc2a145a438224e446d581948200dfd190d235475f6ce6c3fc356a3ef68713ce90127f7b4566fb7838b47f0dcfdddd901273bcacea7a27eac04c923e776  modules-initfs
+6f5b33712c6f3aa37d94744b14921a6528920328cee702a5c4243c1352caa1261916c4044d1d2705a9d898537f307b686fecda3a923de0bad568ed412ef54a58  ucm-a70q.conf
+5f9fff445c30e47eb6f708173973fbcd5666e7a94a97c95c2e94f24867e4893fe05fb54b87522c0ea2edfdaf5ba6b036739854ec01b30998462e2367c759389e  ucm-HiFi.conf
+"
