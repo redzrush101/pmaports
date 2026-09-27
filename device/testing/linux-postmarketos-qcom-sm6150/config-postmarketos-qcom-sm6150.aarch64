@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 7.3.0-rc4 Kernel Configuration
+# Linux/arm64 7.3.0-rc5 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 21.1.8 (6ubuntu1)"
 CONFIG_GCC_VERSION=0
@@ -20,6 +20,22 @@ CONFIG_TOOLS_SUPPORT_RELR=y
 CONFIG_CC_HAS_ASM_INLINE=y
 CONFIG_CC_HAS_ASSUME=y
 CONFIG_CC_HAS_NO_PROFILE_FN_ATTR=y
+CONFIG_CC_OPT_ZERO_INIT_PADDING_BITS=""
+CONFIG_CC_OPT_NO_ADDRSIG="-fno-addrsig"
+CONFIG_CC_OPT_DIAGNOSTICS_SHOW_CONTEXT=""
+CONFIG_CC_OPT_DIAGNOSTICS_SHOW_INLINING_CHAIN=""
+CONFIG_CC_OPT_STRICT_FLEX_ARRAYS="-fstrict-flex-arrays=3"
+CONFIG_LD_OPT_FORCE_GROUP_ALLOCATION="--force-group-allocation"
+CONFIG_LD_OPT_NO_WARN_RWX_SEGMENTS=""
+CONFIG_CC_OPT_WNO_ADDRESS_OF_PACKED_MEMBER="-Wno-address-of-packed-member"
+CONFIG_CC_OPT_WNO_FORMAT_OVERFLOW_NON_KPRINTF="-Wno-format-overflow-non-kprintf"
+CONFIG_CC_OPT_WNO_FORMAT_TRUNCATION_NON_KPRINTF="-Wno-format-truncation-non-kprintf"
+CONFIG_CC_OPT_WNO_DEFAULT_CONST_INIT_UNSAFE="-Wno-default-const-init-unsafe"
+CONFIG_CC_OPT_WVLA_LARGER_THAN=""
+CONFIG_CC_OPT_WNO_UNTERMINATED_STRING_INITIALIZATION="-Wno-unterminated-string-initialization"
+CONFIG_CC_OPT_WERROR_DESIGNATED_INIT=""
+CONFIG_CC_OPT_WENUM_CONVERSION="-Wenum-conversion"
+CONFIG_CC_OPT_WNO_FORMAT_OVERFLOW="-Wno-format-overflow"
 CONFIG_CC_HAS_COUNTED_BY=y
 CONFIG_CC_HAS_BROKEN_COUNTED_BY_REF=y
 CONFIG_CC_HAS_MULTIDIMENSIONAL_NONSTRING=y
@@ -356,6 +372,7 @@ CONFIG_BUILTIN_RETURN_ADDRESS_STRIPS_PAC=y
 # CONFIG_ARCH_BST is not set
 # CONFIG_ARCH_CIX is not set
 # CONFIG_ARCH_EXYNOS is not set
+# CONFIG_ARCH_GOOGLE is not set
 # CONFIG_ARCH_K3 is not set
 # CONFIG_ARCH_LG1K is not set
 # CONFIG_ARCH_HISI is not set
@@ -1177,6 +1194,10 @@ CONFIG_ARCH_HAS_USER_SHADOW_STACK=y
 CONFIG_PT_RECLAIM=y
 CONFIG_FIND_NORMAL_PAGE=y
 CONFIG_ARCH_HAS_LAZY_MMU_MODE=y
+CONFIG_ARCH_HAS_CHECK_WX=y
+CONFIG_CHECK_WX=y
+CONFIG_ARCH_HAS_PTDUMP=y
+CONFIG_PTDUMP=y
 
 #
 # Data Access Monitoring
@@ -1605,7 +1626,6 @@ CONFIG_VLAN_8021Q=m
 CONFIG_VLAN_8021Q_GVRP=y
 CONFIG_VLAN_8021Q_MVRP=y
 CONFIG_LLC=m
-# CONFIG_LLC2 is not set
 # CONFIG_X25 is not set
 # CONFIG_LAPB is not set
 # CONFIG_PHONET is not set
@@ -2119,6 +2139,7 @@ CONFIG_FW_CS_DSP=m
 CONFIG_COREBOOT_FIRMWARE=y
 CONFIG_COREBOOT_CBMEM=m
 CONFIG_COREBOOT_TABLE=m
+# CONFIG_COREBOOT_CFR is not set
 # CONFIG_COREBOOT_FRAMEBUFFER is not set
 # CONFIG_COREBOOT_MEMCONSOLE is not set
 # CONFIG_GOOGLE_VPD is not set
@@ -5473,12 +5494,115 @@ CONFIG_VIDEO_CAMERA_LENS=y
 # end of Flash devices
 
 #
-# audio, video and radio I2C drivers auto-selected by 'Autoselect ancillary drivers'
+# audio, video and radio I2C drivers
 #
+
+#
+# Audio decoders, processors and mixers
+#
+# CONFIG_VIDEO_CS3308 is not set
+# CONFIG_VIDEO_CS5345 is not set
+# CONFIG_VIDEO_CS53L32A is not set
+# CONFIG_VIDEO_MSP3400 is not set
+# CONFIG_VIDEO_SONY_BTF_MPX is not set
+# CONFIG_VIDEO_TDA1997X is not set
+# CONFIG_VIDEO_TDA7432 is not set
+# CONFIG_VIDEO_TDA9840 is not set
+# CONFIG_VIDEO_TEA6415C is not set
+# CONFIG_VIDEO_TEA6420 is not set
+# CONFIG_VIDEO_TLV320AIC23B is not set
+# CONFIG_VIDEO_TVAUDIO is not set
+# CONFIG_VIDEO_UDA1342 is not set
+# CONFIG_VIDEO_VP27SMPX is not set
+# CONFIG_VIDEO_WM8739 is not set
+# CONFIG_VIDEO_WM8775 is not set
+# end of Audio decoders, processors and mixers
+
+#
+# RDS decoders
+#
+# CONFIG_VIDEO_SAA6588 is not set
+# end of RDS decoders
+
+#
+# Video decoders
+#
+# CONFIG_VIDEO_ADV7180 is not set
+# CONFIG_VIDEO_ADV7183 is not set
+# CONFIG_VIDEO_ADV748X is not set
+# CONFIG_VIDEO_ADV7604 is not set
+# CONFIG_VIDEO_ADV7842 is not set
+# CONFIG_VIDEO_BT819 is not set
+# CONFIG_VIDEO_BT856 is not set
+# CONFIG_VIDEO_BT866 is not set
+# CONFIG_VIDEO_ISL7998X is not set
+# CONFIG_VIDEO_IT6625 is not set
+# CONFIG_VIDEO_LT6911UXE is not set
+# CONFIG_VIDEO_KS0127 is not set
+# CONFIG_VIDEO_MAX9286 is not set
+# CONFIG_VIDEO_ML86V7667 is not set
+# CONFIG_VIDEO_SAA7110 is not set
+# CONFIG_VIDEO_SAA711X is not set
+# CONFIG_VIDEO_TC358743 is not set
+# CONFIG_VIDEO_TC358746 is not set
+# CONFIG_VIDEO_TVP514X is not set
+# CONFIG_VIDEO_TVP5150 is not set
+# CONFIG_VIDEO_TVP7002 is not set
+# CONFIG_VIDEO_TW2804 is not set
+# CONFIG_VIDEO_TW9900 is not set
+# CONFIG_VIDEO_TW9903 is not set
+# CONFIG_VIDEO_TW9906 is not set
+# CONFIG_VIDEO_TW9910 is not set
+# CONFIG_VIDEO_VPX3220 is not set
 
 #
 # Video and audio decoders
 #
+# CONFIG_VIDEO_SAA717X is not set
+# CONFIG_VIDEO_CX25840 is not set
+# end of Video decoders
+
+#
+# Video encoders
+#
+# CONFIG_VIDEO_ADV7170 is not set
+# CONFIG_VIDEO_ADV7175 is not set
+# CONFIG_VIDEO_ADV7343 is not set
+# CONFIG_VIDEO_ADV7393 is not set
+# CONFIG_VIDEO_AK881X is not set
+# CONFIG_VIDEO_SAA7127 is not set
+# CONFIG_VIDEO_SAA7185 is not set
+# CONFIG_VIDEO_THS8200 is not set
+# end of Video encoders
+
+#
+# Video improvement chips
+#
+# CONFIG_VIDEO_UPD64031A is not set
+# CONFIG_VIDEO_UPD64083 is not set
+# end of Video improvement chips
+
+#
+# Audio/Video compression chips
+#
+# CONFIG_VIDEO_SAA6752HS is not set
+# end of Audio/Video compression chips
+
+#
+# SDR tuner chips
+#
+# CONFIG_SDR_MAX2175 is not set
+# end of SDR tuner chips
+
+#
+# Miscellaneous helper chips
+#
+# CONFIG_VIDEO_INTEL_CVS is not set
+# CONFIG_VIDEO_I2C is not set
+# CONFIG_VIDEO_M52790 is not set
+# CONFIG_VIDEO_ST_MIPID02 is not set
+# CONFIG_VIDEO_THS7303 is not set
+# end of Miscellaneous helper chips
 
 #
 # Video serializers and deserializers
@@ -5489,10 +5613,6 @@ CONFIG_VIDEO_CAMERA_LENS=y
 # CONFIG_VIDEO_MAX96714 is not set
 # CONFIG_VIDEO_MAX96717 is not set
 # end of Video serializers and deserializers
-
-#
-# SPI I2C drivers auto-selected by 'Autoselect ancillary drivers'
-#
 
 #
 # Media SPI Adapters
@@ -8050,6 +8170,7 @@ CONFIG_IPQ_NSSCC_9574=m
 CONFIG_MSM_GCC_8916=y
 # CONFIG_MSM_GCC_8917 is not set
 # CONFIG_MSM_GCC_8939 is not set
+CONFIG_MSM_GCC_8952=y
 CONFIG_MSM_GCC_8953=y
 # CONFIG_MSM_GCC_8976 is not set
 CONFIG_MSM_MMCC_8994=m
@@ -8347,7 +8468,14 @@ CONFIG_QCOM_MDT_LOADER=y
 CONFIG_QCOM_PDR_HELPERS=m
 CONFIG_QCOM_PDR_MSG=m
 CONFIG_QCOM_QMI_HELPERS=m
+CONFIG_QCOM_QMI_TMD=m
 CONFIG_QCOM_UBWC_CONFIG=y
+
+#
+# ST SoC drivers
+#
+# end of ST SoC drivers
+
 CONFIG_SOC_TI=y
 
 #
@@ -8740,7 +8868,8 @@ CONFIG_IIO_ST_SENSORS_CORE=m
 # CONFIG_MCP4725 is not set
 # CONFIG_MCP4728 is not set
 # CONFIG_MCP47A1 is not set
-# CONFIG_MCP47FEB02 is not set
+# CONFIG_MCP47FEB02_I2C is not set
+# CONFIG_MCP47FEB02_SPI is not set
 # CONFIG_MCP4821 is not set
 # CONFIG_MCP4922 is not set
 # CONFIG_TI_DAC082S085 is not set
@@ -10354,9 +10483,6 @@ CONFIG_SLUB_DEBUG=y
 # CONFIG_PAGE_POISONING is not set
 # CONFIG_DEBUG_PAGE_REF is not set
 # CONFIG_DEBUG_RODATA_TEST is not set
-CONFIG_ARCH_HAS_DEBUG_WX=y
-# CONFIG_DEBUG_WX is not set
-CONFIG_ARCH_HAS_PTDUMP=y
 # CONFIG_PTDUMP_DEBUGFS is not set
 CONFIG_HAVE_DEBUG_KMEMLEAK=y
 # CONFIG_DEBUG_KMEMLEAK is not set

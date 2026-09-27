@@ -1,8 +1,8 @@
 maintainer="Yassin Rezai <yassinrsocial@proton.me>"
 _flavor="postmarketos-qcom-sm6150"
 pkgname="linux-$_flavor"
-pkgver=7.3_rc4_git20260925
-pkgrel=0
+pkgver=7.3_rc5_git20261001
+pkgrel=5
 pkgdesc="Mainline kernel fork for Qualcomm SM6150 devices"
 arch="aarch64"
 _carch="arm64"
@@ -34,8 +34,8 @@ makedepends="
 	zstd
 "
 
-# linux-next next-20260925 with the SM6150 series (branch a70q/mainline-next)
-_commit="aba7b670e29259d0a8c82a91e8067306240770b5"
+# linux-next next-20261001 with the SM6150 series (branch a70q/mainline-next)
+_commit="27c51616ef2fc3c046f930af119401efcff6bf44"
 
 source="
 	linux-$_commit.tar.gz::$url/archive/$_commit.tar.gz
@@ -83,6 +83,6 @@ package() {
 }
 
 sha512sums="
-e70b8dd49fe047d53804debccc572717b794a4d31c30985da8c32d8e798b39b447edb1e225667059b8e9d1d893783185c9be09ea73f7e0248983ac1df8f75624  linux-aba7b670e29259d0a8c82a91e8067306240770b5.tar.gz
-e21fcd508481bdd40f0ecc8d409ba4ee2185e8bce24e53363d0fa48cca20a45b1e11cddc6c77bf99379ddf54f08256770eb0db606db5f7d399771bedd972e2fd  config-postmarketos-qcom-sm6150.aarch64
+d12527e033220b1b82eaa9ba1c6536e764dd3f627bb99f5515442805a7186a91f0caf76c9496c14d4add17a00b6f6db416398cc7faf9380ce02e8ebbd770860d  linux-27c51616ef2fc3c046f930af119401efcff6bf44.tar.gz
+1c21399e23749f4beee69beb1a92b9fd4c319701538fd5fa9afb4165484ca5c57dbf451fbd30b9cdbb617d2e2d229855a64414267abfd52f72521b8f01114063  config-postmarketos-qcom-sm6150.aarch64
 "
