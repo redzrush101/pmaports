@@ -1,0 +1,17 @@
+--- a/msm-firmware-loader.sh
++++ b/msm-firmware-loader.sh
+@@ -158,6 +158,14 @@
+ 	done
+ done
+ 
++# Preserve chipset-specific subdirectories (for example qca6750).
++for directory in "$BASEDIR"/mnt/*/image/*/
++do
++	[ -d "$directory" ] || continue
++	name=$(basename "$directory")
++	[ -e "$BASEDIR/target/$name" ] || ln -s "$directory" "$BASEDIR/target/$name"
++done
++
+ # Check for sns.reg in persist partition
+ if [ -f "$BASEDIR"/mnt/persist/sensors/sns.reg ]
+ then

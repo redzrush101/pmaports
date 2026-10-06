@@ -1,7 +1,7 @@
 maintainer=""
 pkgname=msm-firmware-loader
 pkgver=1.8.0
-pkgrel=2
+pkgrel=5
 pkgdesc="Set of init services to automatically load firmware from device partitions"
 url="https://postmarketos.org/"
 subpackages="$pkgname-openrc $pkgname-systemd $pkgname-wcnss"
@@ -9,6 +9,9 @@ arch="armhf armv7 aarch64"
 license="MIT"
 source="
 	https://gitlab.postmarketos.org/postmarketOS/msm-firmware-loader/-/archive/$pkgver/msm-firmware-loader-$pkgver.tar.gz
+	0001-preserve-chipset-firmware-directories.patch
+	0002-mount-modemfirmware-partition.patch
+	0003-create-mount-directory.patch
 "
 options="!check"
 
@@ -46,4 +49,7 @@ wcnss() {
 
 sha512sums="
 c87e9e45fa47b046eb056e1830b32f081a9100bd937e683794aa95913d93e39bdc8911e599b8ab6a368c42b0bf56d9a29c4f0e6ba31b7fb31747c43eb6053bbd  msm-firmware-loader-1.8.0.tar.gz
+24e0df73f7f86a0eb3e98c69613bf74a44aba36fb0ea50679c519eac3ee508b77deb8d33c9d6a6bbd2452606ae1c2be02af198e70e3b4b8f6be2be805e6da254  0001-preserve-chipset-firmware-directories.patch
+e7a24d1a8c3f80775ac0ad2bf22a487880580844e3e2e756e269ebd913b2fb99489cfcad997966881485927173ebb316d9e668d3893c8ad7b86c2c5fbe5ce31e  0002-mount-modemfirmware-partition.patch
+df4b6dbc23557a00df589963942d2ccb06d0e95b854aa975d1f113a6cc02f895774d8bee29250077924ae02f63c5e0004b210e55310e1a99a66f0eda4df0b1e1  0003-create-mount-directory.patch
 "

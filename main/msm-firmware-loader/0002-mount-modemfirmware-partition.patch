@@ -1,0 +1,14 @@
+Newer Qualcomm devices such as the Xiaomi POCO F6 (SM8635) keep the
+modem (MPSS) firmware on a separate "modemfirmware" partition next to
+"modem", which only holds the other firmware images.
+
+--- a/msm-firmware-loader.sh
++++ b/msm-firmware-loader.sh
+@@ -38,6 +38,7 @@
+ 	bluetooth$(ab_get_slot)
+ 	dsp$(ab_get_slot)
+ 	modem$(ab_get_slot)
++	modemfirmware$(ab_get_slot)
+ 	persist
+ 	vendor$(ab_get_slot)
+ "
