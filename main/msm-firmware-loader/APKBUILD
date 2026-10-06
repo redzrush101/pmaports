@@ -1,7 +1,7 @@
 maintainer="Stefan Hansson <newbyte@postmarketos.org>"
 pkgname=msm-firmware-loader
 pkgver=1.9.0
-pkgrel=0
+pkgrel=1
 pkgdesc="Set of init services to automatically load firmware from device partitions"
 url="https://postmarketos.org/"
 subpackages="
@@ -20,6 +20,9 @@ source="
 	hexagonrpcd-adsp-sensorspd.service
 	hexagonrpcd-sdsp.service
 	hexagonrpcd.confd
+	0001-preserve-chipset-firmware-directories.patch
+	0002-mount-modemfirmware-partition.patch
+	0003-create-mount-directory.patch
 "
 install="$pkgname-openrc.post-install"
 options="!check"
@@ -87,4 +90,7 @@ sha512sums="
 134762b172fbc2a28c1963f5594829661ffe0d49d354d85c376c7121d9d761a25b87dc5ffdba5bf021fc729bae0ce9cdc3a9af74ef415ee0860ffae391d260b2  hexagonrpcd-adsp-sensorspd.service
 71e9363b3d89c5493fdb5dae198c5fdabe707953bb3a0f1591d2001750479eaf167d4f657e2503cf1b1321df9123bcbe29f1762c0d7520416716a44488795de5  hexagonrpcd-sdsp.service
 82e772778b0489e185f7bf845d45434f0b3146eabcfc98fd493b643f26d4bb843f7ca09526f6189572b5d2116d0ebfd5020d95850f482b2803bc992a67037330  hexagonrpcd.confd
+bf858fabe438ef1642707c593988d3b26f76cc1f00ca221baf85237a6a59c6225b6bede3533a690a99872fc488c968252adb1a2b0be51a6b7ef16ba256d8ddf1  0001-preserve-chipset-firmware-directories.patch
+8055224b352513d4b7b31cf2911e03b3a3ebf7b57f2770b9b4e535b77ab169b18af90dd6fef483f9ebc86ab879bc63e038966a37205e35fabd423ad06c735a90  0002-mount-modemfirmware-partition.patch
+d51ae9dfc53bb6accfce04a4e8062069f6677be34a0742eda57fc34c78933ba76778012c3a162aa8760796634ba958ce302197365f43e8cb7a6586a346e04986  0003-create-mount-directory.patch
 "
