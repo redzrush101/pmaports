@@ -1,0 +1,74 @@
+# Maintainer: Yassin Rezai <yassinrsocial@proton.me>
+_flavor="postmarketos-qcom-palawan"
+pkgname=linux-$_flavor
+pkgver=7.3_rc5
+pkgrel=4
+pkgdesc="Mainline Kernel fork for Qualcomm Palawan SoC (SM8635, SM7675) devices"
+arch="aarch64"
+_carch="arm64"
+url="https://github.com/redzrush101/linux/tree/peridot/devel"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps
+	pmb:cross-native
+	pmb:kconfigcheck-community
+	"
+makedepends="
+	bash
+	bison
+	clang
+	elfutils-dev
+	findutils
+	flex
+	linux-headers
+	lld
+	llvm
+	openssl-dev
+	pahole
+	perl
+	postmarketos-installkernel
+	python3
+"
+
+# peridot/devel: v7.3-rc5 with the Palawan series and the peridot patches
+_commit="1e48752c4c87c1b70466807a469bd0f5d92812a3"
+_config="config-$_flavor.$arch"
+source="
+	linux-$_commit.tar.gz::https://codeload.github.com/redzrush101/linux/tar.gz/$_commit
+	$_config
+"
+builddir="$srcdir/linux-$_commit"
+
+prepare() {
+	default_prepare
+	cp "$srcdir/$_config" .config
+	make ARCH="$_carch" LLVM=1 olddefconfig
+}
+
+build() {
+	unset LDFLAGS
+	make ARCH="$_carch" LLVM=1 \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-$_flavor"
+}
+
+package() {
+	# Gzip compressed Image, the only compression the bootloader handles
+	install -Dm644 "$builddir/arch/$_carch/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz"
+
+	make modules_install dtbs_install \
+		ARCH="$_carch" \
+		LLVM=1 \
+		INSTALL_PATH="$pkgdir"/boot/ \
+		INSTALL_MOD_PATH="$pkgdir"/usr \
+		INSTALL_MOD_STRIP=1 \
+		INSTALL_DTBS_PATH="$pkgdir/boot/dtbs"
+	rm -f "$pkgdir"/usr/lib/modules/*/build "$pkgdir"/usr/lib/modules/*/source
+
+	install -D "$builddir"/include/config/kernel.release \
+		"$pkgdir"/usr/share/kernel/$_flavor/kernel.release
+}
+
+sha512sums="
+c5a795c2fa204ca4ccb6f9607eb5b7460f0fe1f13d7ce6c2bfb7eea6a6100d568a3d526ffc70ddb3f155cec0c7341ad8b48f16dcd0ac669327c77bc2a868feb0  linux-1e48752c4c87c1b70466807a469bd0f5d92812a3.tar.gz
+e8e88e7c319e3645156e713ece6d066aa6c537ccaaf4a18f48370e8172e27973866fcb836f4cb70f60f126e2f9c84adf08dce73d3d2934ee93f52a1a524bd316  config-postmarketos-qcom-palawan.aarch64
+"
