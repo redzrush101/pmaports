@@ -1,0 +1,75 @@
+# Forked from Alpine to add writable registry support for newer Qualcomm
+# sensor frameworks; the patches are pending upstream review.
+# Contributor: Dylan Van Assche <dylan@postmarketos.org>
+# Maintainer: Yassin Rezai <yassinrsocial@proton.me>
+pkgname=hexagonrpcd
+pkgver=0.5.0_git20260915
+pkgrel=1
+_commit="da7a3742ab8d5273a281b70ee11f16fb2cb6a690"
+pkgdesc="Qualcomm HexagonFS daemon"
+url="https://github.com/linux-msm/hexagonrpc"
+# s390x: fails on 1 test. Hexagonrpcd is specific to Qualcomm ARM SoCs.
+arch="all !s390x"
+license="GPL-3.0-or-later"
+makedepends="linux-headers meson"
+install="$pkgname.pre-install"
+subpackages="$pkgname-dev $pkgname-doc $pkgname-openrc $pkgname-systemd $pkgname-udev"
+source="hexagonrpc-$_commit.tar.gz::https://github.com/linux-msm/hexagonrpc/archive/$_commit.tar.gz
+	0001-hexagonrpcd-listener-fetch-input-buffers-larger-than.patch
+	0002-hexagonrpcd-hexagonfs-add-writable-mapped-directorie.patch
+	0003-hexagonrpcd-apps_std-support-writing-files.patch
+	0004-hexagonrpcd-add-an-option-to-serve-a-writable-persis.patch
+	0005-hexagonrpcd-serve-the-sensor-configuration-at-odm.patch
+	0006-hexagonrpcd-apps_std-answer-fopen_with_env_fd-lookup.patch
+	0007-data-restart-the-servers-after-resume.patch
+	10-fastrpc.rules
+	80-hexagonrpcd.preset
+	$pkgname-adsp-rootpd.initd
+	$pkgname-adsp-sensorspd.initd
+	$pkgname-sdsp.initd
+	"
+builddir="$srcdir/hexagonrpc-$_commit"
+
+build() {
+	abuild-meson -Db_lto=true . output
+	meson compile -C output
+}
+
+check() {
+	meson test -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+
+	# Allow access for FastRPC node for FastRPC user/group
+	install -Dm644 "$srcdir"/10-fastrpc.rules -t "$pkgdir"/usr/lib/udev/rules.d/
+
+	install -Dm755 "$srcdir"/$pkgname-adsp-rootpd.initd "$pkgdir"/etc/init.d/$pkgname-adsp-rootpd
+	install -Dm755 "$srcdir"/$pkgname-adsp-sensorspd.initd "$pkgdir"/etc/init.d/$pkgname-adsp-sensorspd
+	install -Dm755 "$srcdir"/$pkgname-sdsp.initd "$pkgdir"/etc/init.d/$pkgname-sdsp
+}
+
+systemd() {
+	default_systemd
+
+	# Enable the service that restarts the servers after resume
+	install -Dm644 "$srcdir"/80-hexagonrpcd.preset \
+		-t "$subpkgdir"/usr/lib/systemd/system-preset/
+}
+
+sha512sums="
+866ffde3110d3744cd6ea0dd4b965e640e293e21a77cd3767ba770515ed09dda11667d70f806d4fedad283d7e38671c2d455b6c612b7225a038930d3eac5bc2c  hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz
+59515021fe7bb02d1b0d5f2eac76d5bc6cc306e19d18152c5b6647ec8fd3e2e57634dec9170bce381b4224ba7bf6438e1ff082c543919f9fdd66a408772d9810  0001-hexagonrpcd-listener-fetch-input-buffers-larger-than.patch
+45605fae7c4d5014f6851648214e5504c26c041d20e2d40c400e4444381350b063477da222f290e27ee87c5f285a30cd4b3769893f3a7393cb3219cfbd7fe1dd  0002-hexagonrpcd-hexagonfs-add-writable-mapped-directorie.patch
+180520600b8dd504b3a9e8b2f2d1eaa73841878cbbdd15b45d21b0fb9ac5b89451fd4959720039157ec2b0b38188affaf9ab0075b084db4150fec16736f3deb3  0003-hexagonrpcd-apps_std-support-writing-files.patch
+635a44737e54ab18df22f70e128f3e8aed2015be51fa7d0a2ef606892eca519bfa1112b2dd8caea4a2bf4af7cff40abbf386ff8a434aa82e23ea32de529562c7  0004-hexagonrpcd-add-an-option-to-serve-a-writable-persis.patch
+df1bc8a0aa3d879086ae8e9bdaeff3e8d90fbf45d9011a651278615a2391ae9edc673976abe9a32a9d78cafd92e79704484b4b58396e6a6f63563e31f05a9e0e  0005-hexagonrpcd-serve-the-sensor-configuration-at-odm.patch
+12cc301abf07ec283fd9a1627b6bde0d166451c19bb1c0938a3119c2160ab876a436c9bd60bc255a20b3e05fe0e68cbb13d9353f70c6aad72de53d99d33a5d51  0006-hexagonrpcd-apps_std-answer-fopen_with_env_fd-lookup.patch
+1fb43581a013e703dedbe642b35c567fc8bcf8fbdcf71183e85aabd48e938f1f2f45036e3894c277f07d2cb3bb3e694bcf44957cc104dc5343e891e4197b0684  0007-data-restart-the-servers-after-resume.patch
+f931cf5f901a7c17ffb0eb194b5de2c532fd238692898bf264c484b13b93119c9727bd8f8daf6a7d1668cc9108a9a0662231d300c6f1376e3e4edd3ce41d235d  10-fastrpc.rules
+30eae49e331039e45226c70bd0e1750007dbdf9beea3f5ee451385811db4a749abe072df4662cc7d2403cabb9a4d338bf584abb716b95c42aa44d18291f63bac  80-hexagonrpcd.preset
+934fda348f8b8896d15fa892e81e6dea022144c9bfcb557c0938898ac452ee3ab6a39f7ceaa54ede2ea78711f3516375c01746f8c55d1acec5ec1f1d9c9f816b  hexagonrpcd-adsp-rootpd.initd
+429f4f76e527b4289f95628603e4cee8b8d048d9a2a594ee367e5765b7554f494848c1f1aa0a7da84c193a698cd885e9325323fb6239293f1718775015cd3df0  hexagonrpcd-adsp-sensorspd.initd
+c88d3a813aa92298c3585c33111389c7175c67240497f2aeeb413228ccd8b991ed2e5edd2ffd4603389cfc9c8af6dfc5cd4c94c9979919e3efdd5bd5f547c9bd  hexagonrpcd-sdsp.initd
+"

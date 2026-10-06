@@ -1,0 +1,204 @@
+From 3138bc17239e08294695292468fc3091d55cd523 Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Tue, 6 Oct 2026 21:21:13 +0200
+Subject: [PATCH 4/7] hexagonrpcd: add an option to serve a writable persist
+ directory
+
+Newer sensor frameworks update their registry and the files next to it,
+such as sns_reg_version and parsed_file_list.csv, at startup. They fail
+an assertion and crash the remote processor if the registry cannot be
+written. These files are outside of the registry directory that is
+currently served.
+
+Add a -P option that serves a writable directory as the persist
+partition at /persist and /mnt/vendor/persist. Without the option, the
+read-only registry is served as before.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ hexagonrpcd/hexagonrpcd.1  | 14 ++++++++++++++
+ hexagonrpcd/rpcd.c         | 14 ++++++++++----
+ hexagonrpcd/rpcd_builder.c | 39 +++++++++++++++++++++++++++++++-------
+ hexagonrpcd/rpcd_builder.h |  4 +++-
+ 4 files changed, 59 insertions(+), 12 deletions(-)
+
+diff --git a/hexagonrpcd/hexagonrpcd.1 b/hexagonrpcd/hexagonrpcd.1
+index 05add18..8e6a741 100644
+--- a/hexagonrpcd/hexagonrpcd.1
++++ b/hexagonrpcd/hexagonrpcd.1
+@@ -22,6 +22,10 @@ FastRPC device node to attach to
+ \fB\-p \fIPROGRAM\fP
+ Run client program with shared file descriptor
+ .TP
++\fB\-P \fIDIR\fP
++Writable directory served as the persist partition, replacing the read-only
++sensors/registry directory
++.TP
+ \fB\-R \fIDIR\fP
+ Root directory of served files (default: /usr/share/qcom/)
+ .TP
+@@ -55,6 +59,16 @@ socinfo                 /sys/devices/soc0
+ These files and directories should be populated with files from your device's
+ Android firmware.
+ 
++Newer sensor frameworks write to the registry and to the files next to it, such
++as /mnt/vendor/persist/sensors/registry/sns_reg_version, and stop if they
++cannot. For these, use the \-P option with a writable copy of the persist
++partition's sensors directory tree, for example:
++
++.EX
++    PERSIST/sensors/registry/registry/
++    PERSIST/sensors/registry/sns_reg_version
++.EE
++
+ If you can pass the -R option, the convention is to pass -R
+ /usr/share/qcom/SOC/VENDOR/DEVICE, where SOC is the SoC name in lowercase,
+ VENDOR is the capitalized name of the device vendor, and DEVICE is the device
+diff --git a/hexagonrpcd/rpcd.c b/hexagonrpcd/rpcd.c
+index 600237b..45dddb3 100644
+--- a/hexagonrpcd/rpcd.c
++++ b/hexagonrpcd/rpcd.c
+@@ -76,6 +76,7 @@ static void print_usage(const char *argv0)
+ 	       "\t-d DSP\t\tDSP name (default: "")\n"
+ 	       "\t-f DEVICE\tFastRPC device node to attach to\n"
+ 	       "\t-p PROGRAM\tRun client program with shared file descriptor\n"
++	       "\t-P DIR\t\tWritable directory served as the persist partition\n"
+ 	       "\t-R DIR\t\tRoot directory of served files (default: /usr/share/qcom/)\n"
+ 	       "\t-s\t\tAttach to sensorspd\n"
+ 	       "\t-h\t\tPrint help and exit\n");
+@@ -188,7 +189,8 @@ static int start_clients(size_t n_progs, const char **progs, pid_t *pids)
+ 	return 0;
+ }
+ 
+-static void *start_reverse_tunnel(int fd, const char *device_dir, const char *dsp)
++static void *start_reverse_tunnel(int fd, const char *device_dir,
++				  const char *persist_dir, const char *dsp)
+ {
+ 	struct fastrpc_interface **ifaces;
+ 	struct hexagonfs_dirent *root_dir;
+@@ -199,7 +201,7 @@ static void *start_reverse_tunnel(int fd, const char *device_dir, const char *ds
+ 	if (ifaces == NULL)
+ 		return NULL;
+ 
+-	root_dir = construct_root_dir(device_dir, dsp);
++	root_dir = construct_root_dir(device_dir, persist_dir, dsp);
+ 
+ 	/*
+ 	 * The apps_remotectl interface patiently waits for this function to
+@@ -348,6 +350,7 @@ int main(int argc, char* argv[])
+ {
+ 	char *fastrpc_node = NULL;
+ 	const char *device_dir = "/usr/share/qcom/";
++	const char *persist_dir = NULL;
+ 	const char *dsp = "";
+ 	const char *create_shell = NULL;
+ 	const char *guessed_device_dir;
+@@ -373,7 +376,7 @@ int main(int argc, char* argv[])
+ 	if (guessed_device_dir != NULL)
+ 		device_dir = guessed_device_dir;
+ 
+-	while ((opt = getopt(argc, argv, "c:d:f:p:R:sh")) != -1) {
++	while ((opt = getopt(argc, argv, "c:d:f:p:P:R:sh")) != -1) {
+ 		switch (opt) {
+ 			case 'c':
+ 				create_shell = optarg;
+@@ -388,6 +391,9 @@ int main(int argc, char* argv[])
+ 				progs[n_progs] = optarg;
+ 				n_progs++;
+ 				break;
++			case 'P':
++				persist_dir = optarg;
++				break;
+ 			case 'R':
+ 				device_dir = optarg;
+ 				break;
+@@ -438,7 +444,7 @@ int main(int argc, char* argv[])
+ 	if (ret)
+ 		goto err_close_dev;
+ 
+-	start_reverse_tunnel(fd, device_dir, dsp);
++	start_reverse_tunnel(fd, device_dir, persist_dir, dsp);
+ 
+ 	terminate_clients(n_progs, pids);
+ 
+diff --git a/hexagonrpcd/rpcd_builder.c b/hexagonrpcd/rpcd_builder.c
+index d374958..753affc 100644
+--- a/hexagonrpcd/rpcd_builder.c
++++ b/hexagonrpcd/rpcd_builder.c
+@@ -89,6 +89,21 @@ static struct hexagonfs_dirent *hfs_map(const char *name, const char *path)
+ 	return file;
+ }
+ 
++static struct hexagonfs_dirent *hfs_map_rw(const char *name, const char *path)
++{
++	struct hexagonfs_dirent *file;
++
++	file = malloc(sizeof(struct hexagonfs_dirent));
++	if (file == NULL)
++		return NULL;
++
++	file->name = name;
++	file->ops = &hexagonfs_mapped_rw_ops;
++	file->u.phys = path;
++
++	return file;
++}
++
+ static struct hexagonfs_dirent *hfs_map_or_empty(const char *name, const char *path)
+ {
+ 	struct hexagonfs_dirent *file;
+@@ -109,7 +124,9 @@ static struct hexagonfs_dirent *hfs_map_or_empty(const char *name, const char *p
+  *
+  * TODO: Make this free()-able with reference counts
+  */
+-struct hexagonfs_dirent *construct_root_dir(const char *prefix, const char *dsp)
++struct hexagonfs_dirent *construct_root_dir(const char *prefix,
++					    const char *persist,
++					    const char *dsp)
+ {
+ 	char *acdbdata, *dsp_libs, *sns_cfg, *sns_reg, *sns_reg_config, *socinfo;
+ 	size_t n_prefix;
+@@ -159,14 +176,22 @@ struct hexagonfs_dirent *construct_root_dir(const char *prefix, const char *dsp)
+ 	/*
+ 	 * Some platforms need this in / and some need it in /mnt/vendor. Form
+ 	 * a hard link between both locations.
++	 *
++	 * Newer sensor frameworks update files in the persist partition at
++	 * startup and fail if they cannot be written. If a writable persist
++	 * directory is given, serve it instead of the read-only registry.
+ 	 */
+-	persist_dir = hfs_mkdir("persist", 1,
+-				hfs_mkdir("sensors", 1,
+-					hfs_mkdir("registry", 1,
+-						hfs_map("registry", sns_reg)
++	if (persist != NULL) {
++		persist_dir = hfs_map_rw("persist", persist);
++	} else {
++		persist_dir = hfs_mkdir("persist", 1,
++					hfs_mkdir("sensors", 1,
++						hfs_mkdir("registry", 1,
++							hfs_map("registry", sns_reg)
++						)
+ 					)
+-				)
+-		      );
++			      );
++	}
+ 
+ 	/*
+ 	 * Some platforms need vendor in / and some need it in /system. Form
+diff --git a/hexagonrpcd/rpcd_builder.h b/hexagonrpcd/rpcd_builder.h
+index b68e6c4..bcbf4d6 100644
+--- a/hexagonrpcd/rpcd_builder.h
++++ b/hexagonrpcd/rpcd_builder.h
+@@ -24,6 +24,8 @@
+ 
+ #include "hexagonfs.h"
+ 
+-struct hexagonfs_dirent *construct_root_dir(const char *prefix, const char *dsp);
++struct hexagonfs_dirent *construct_root_dir(const char *prefix,
++					    const char *persist,
++					    const char *dsp);
+ 
+ #endif
