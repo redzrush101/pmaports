@@ -1,0 +1,10 @@
+--- a/msm-firmware-loader.sh
++++ b/msm-firmware-loader.sh
+@@ -68,6 +68,7 @@
+ # may not be available yet. Since this script only creates symlinks, it
+ # uses tmpfs to work around the early-run limitations as well as to reduce
+ # disk wear slightly.
++mkdir -p "$BASEDIR"
+ mount -o mode=755,nodev,noexec,nosuid -t tmpfs none "$BASEDIR"
+ 
+ mkdir -p "$BASEDIR/mnt"

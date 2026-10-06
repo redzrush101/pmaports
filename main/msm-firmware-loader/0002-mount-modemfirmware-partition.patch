@@ -1,0 +1,10 @@
+--- a/msm-firmware-loader.sh
++++ b/msm-firmware-loader.sh
+@@ -47,6 +47,7 @@
+ 	bluetooth$(ab_get_slot)
+ 	dsp$(ab_get_slot)
+ 	modem$(ab_get_slot)
++	modemfirmware$(ab_get_slot)
+ 	persist
+ 	vendor$(ab_get_slot)
+ 	RADIO
