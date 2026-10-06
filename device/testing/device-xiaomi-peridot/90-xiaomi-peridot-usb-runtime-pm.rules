@@ -1,0 +1,2 @@
+# Let the USB controller runtime suspend when no cable is attached.
+ACTION=="add", SUBSYSTEM=="platform", DRIVER=="dwc3-qcom", ATTR{power/control}="auto"
