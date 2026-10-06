@@ -1,0 +1,94 @@
+From 8f1f290b9b5144a95ca6feee38478a1a994bebdc Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Mon, 5 Oct 2026 21:17:06 +0200
+Subject: [PATCH] util: Retain valid integer scales when calculating fractional
+ scales
+
+The fractional scale calculation searches for integral logical dimensions.
+This can exclude an otherwise valid integer scale when the output size is
+not divisible by it, even though the integer-only calculation allows it.
+
+Keep valid integer candidates in the fractional scale list. For a
+1220x2712 output this includes the configured 3x scale, so display settings
+can retain it when changing the refresh rate. Add a regression test that
+the fractional list contains the valid integer scales for that resolution.
+
+Assisted-by: GPT-6.1-Sol
+
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ src/util.c        | 10 +++++++---
+ tests/test-util.c | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 3 deletions(-)
+
+diff --git a/src/util.c b/src/util.c
+index bb10b08..c0047b6 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -1089,9 +1089,13 @@ phosh_util_calculate_supported_mode_scales (guint32   width,
+         float scale;
+         float scale_value = i + j * SCALE_FACTORS_STEPS;
+ 
+-        scale = get_closest_scale_factor_for_resolution (width, height,
+-                                                         scale_value,
+-                                                         max_bound);
++        /* Integer scales also work when the resolution is not divisible. */
++        if (j == 0 && is_valid_scale (width, height, scale_value))
++          scale = scale_value;
++        else
++          scale = get_closest_scale_factor_for_resolution (width, height,
++                                                           scale_value,
++                                                           max_bound);
+         if (scale > 0.0)
+           g_array_append_val (supported_scales, scale);
+       }
+diff --git a/tests/test-util.c b/tests/test-util.c
+index 8cd62c9..b1d6386 100644
+--- a/tests/test-util.c
++++ b/tests/test-util.c
+@@ -130,6 +130,33 @@ test_phosh_util_calculate_supported_mode_scales_fractional (void)
+ }
+ 
+ 
++static void
++test_phosh_util_fractional_preserves_integer_scales (void)
++{
++  g_autofree float *integer_scales = NULL;
++  g_autofree float *fractional_scales = NULL;
++  int n_integer, n_fractional;
++
++  /* 3x works even though the width is not divisible by three. */
++  integer_scales = phosh_util_calculate_supported_mode_scales (1220, 2712,
++                                                               &n_integer, FALSE);
++  fractional_scales = phosh_util_calculate_supported_mode_scales (1220, 2712,
++                                                                  &n_fractional, TRUE);
++
++  for (int i = 0; i < n_integer; i++) {
++    gboolean found = FALSE;
++
++    for (int j = 0; j < n_fractional; j++) {
++      if (G_APPROX_VALUE (integer_scales[i], fractional_scales[j], FLT_EPSILON)) {
++        found = TRUE;
++        break;
++      }
++    }
++    g_assert_true (found);
++  }
++}
++
++
+ int
+ main (int argc, char *argv[])
+ {
+@@ -141,6 +168,8 @@ main (int argc, char *argv[])
+                    test_phosh_util_calculate_supported_mode_scales_integer);
+   g_test_add_func ("/phosh/util/scale/fractional",
+                    test_phosh_util_calculate_supported_mode_scales_fractional);
++  g_test_add_func ("/phosh/util/scale/fractional-preserves-integer",
++                   test_phosh_util_fractional_preserves_integer_scales);
+ 
+   return g_test_run ();
+ }
+-- 
+2.55.0
+

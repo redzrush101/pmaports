@@ -7,7 +7,7 @@ maintainer="Stefan Hansson <newbyte@postmarketos.org>"
 pkgname=phosh
 _pkgver=0.57.0
 pkgver=9999$_pkgver
-pkgrel=3
+pkgrel=4
 pkgdesc="Wayland shell for GNOME on mobile devices"
 # armhf: blocked by gnome-shell-schemas
 arch="all !armhf"
@@ -79,6 +79,7 @@ subpackages="
 	"
 source="https://sources.phosh.mobi/releases/phosh/phosh-${_pkgver/_/.}.tar.xz
 	splash-timeout-flatpak-dbus.patch
+	0001-util-retain-valid-integer-scales.patch
 	"
 builddir="$srcdir/$pkgname-${_pkgver/_/.}"
 somask="libphoshsearch.so"
@@ -130,4 +131,5 @@ schemas() {
 sha512sums="
 51219a3295b061047765368a0f65a02b131c4b229ec03713f547595b73a98c51b99086769bf0584dd7d44b8426b21d50162e76e955fb7a37a5136cefa253fea8  phosh-0.57.0.tar.xz
 cb4bad612e5d2dff156c6b97b460c16ab7fd48067935b616fe0b65d11c3d255f1ecd06b800c654ac9ea93bc53e823eb47134836dfdf61bb338588dab78d3b9e9  splash-timeout-flatpak-dbus.patch
+5302050516ca698f0449055d1a37399373627c55feefd12a3a3cd8f740db37c6ab4467f2feba99519e746804c4aaeeaafddb7dc072a07e75396374d640c3a816  0001-util-retain-valid-integer-scales.patch
 "
