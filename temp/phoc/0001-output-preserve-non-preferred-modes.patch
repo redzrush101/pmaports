@@ -1,0 +1,38 @@
+From 7d9af70a78a3ec21d1a8eaa6c010314ff0d5a21f Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Mon, 5 Oct 2026 21:11:12 +0200
+Subject: [PATCH] output: Preserve non-preferred modes from output
+ configurations
+
+Output-management clients can select any advertised mode, including one
+which is not preferred. Use that mode when converting the requested head
+state to an output configuration.
+
+Checking the preferred flag incorrectly uses the empty custom-mode fields
+for non-preferred modes. On an output with several refresh rates this
+leaves the preferred refresh rate selected after an apparently successful
+configuration request.
+
+Assisted-by: GPT-6.1-Sol
+
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ src/output.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/output.c b/src/output.c
+index d95d6db..705dcc1 100644
+--- a/src/output.c
++++ b/src/output.c
+@@ -1943,7 +1943,7 @@ phoc_output_config_head_to_output_config (PhocOutput
+   PhocOutputConfig *oc = phoc_output_config_new (phoc_output_get_identifier (self));
+ 
+   oc->enable = TRUE;
+-  if (head->state.mode && head->state.mode->preferred) {
++  if (head->state.mode) {
+     oc->mode.width = head->state.mode->width;
+     oc->mode.height = head->state.mode->height;
+     oc->mode.refresh_rate = head->state.mode->refresh / 1000.0;
+-- 
+2.55.0
+
