@@ -1,0 +1,27 @@
+From: Yassin Rezai <yassinrsocial@proton.me>
+Subject: [PATCH] freedreno: Match FD735 with any fuse id
+
+The msm kernel driver reports the GPU speed bin in bits 47..32 of the
+chip id and sets them to 0xffff when no fuse is read, so the A735 of
+SM8635 (Palawan) shows up as 0xffff43030b00 and no device table entry
+matches:
+
+  MESA: error: fd_pipe_new2:49: unsupported GPU id 0x0 / chip id 0xffff43030b00
+
+Use the wildcard fuse id like the Adreno X1-45 entry it shares its
+configuration with. KGSL reports 0x43030b00, which still matches.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+--- a/src/freedreno/common/freedreno_devices.py
++++ b/src/freedreno/common/freedreno_devices.py
+@@ -1035,7 +1035,7 @@
+ 
+ add_gpus([
+         GPUId(chip_id=0xffff43030c00, name="Adreno X1-45"),
+-        GPUId(chip_id=0x43030B00, name="FD735")
++        GPUId(chip_id=0xffff43030B00, name="FD735"),
+     ], A6xxGPUInfo(
+         CHIP.A7XX,
+         [a7xx_base, a7xx_gen2, GPUProps(enable_tp_ubwc_flag_hint = True)],
