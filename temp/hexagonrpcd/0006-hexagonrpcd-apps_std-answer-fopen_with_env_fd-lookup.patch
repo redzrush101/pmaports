@@ -1,0 +1,189 @@
+From 32c06123332339d367ad8c89ea53412d634cdc32 Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Tue, 6 Oct 2026 21:32:24 +0200
+Subject: [PATCH 6/7] hexagonrpcd: apps_std: answer fopen_with_env_fd lookups
+
+Newer sensor frameworks look up optional libraries with
+fopen_with_env_fd, which shares a buffer with the file contents with the
+remote processor. The daemon currently stops on this unsupported method,
+although the remote processor carries on if a library does not exist.
+
+Look the file up and fail normally if it does not exist. Refuse files
+that exist, since sharing buffers is not supported yet.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ hexagonrpcd/apps_std.c           | 90 ++++++++++++++++++++++++++------
+ hexagonrpcd/interface/apps_std.c | 17 ++++++
+ hexagonrpcd/interface/apps_std.h |  1 +
+ 3 files changed, 92 insertions(+), 16 deletions(-)
+
+diff --git a/hexagonrpcd/apps_std.c b/hexagonrpcd/apps_std.c
+index b6a5fd9..738cbc0 100644
+--- a/hexagonrpcd/apps_std.c
++++ b/hexagonrpcd/apps_std.c
+@@ -184,6 +184,27 @@ static uint32_t apps_std_fseek(void *data,
+ 	return 0;
+ }
+ 
++static uint32_t select_search_dir(struct apps_std_ctx *ctx,
++				  const char *env, int *dirfd)
++{
++	if (!strcmp(env, "ADSP_LIBRARY_PATH")) {
++		*dirfd = ctx->adsp_library_dirfd;
++	} else if (!strcmp(env, "ADSP_AVS_CFG_PATH")) {
++		*dirfd = ctx->adsp_avs_cfg_dirfd;
++	} else {
++		fprintf(stderr, "Unknown search directory %s\n", env);
++		return AEE_EBADPARM;
++	}
++
++	if (*dirfd < 0) {
++		fprintf(stderr, "Could not open virtual %s: %s\n",
++				env, strerror(-*dirfd));
++		return AEE_EFAILED;
++	}
++
++	return 0;
++}
++
+ /*
+  * Translate a C stdio mode string to open() flags for writing. Read-only
+  * modes return 0, so they keep using the read-only lookup.
+@@ -211,6 +232,7 @@ static uint32_t apps_std_fopen_with_env(void *data,
+ 	struct apps_std_ctx *ctx = data;
+ 	uint32_t *out = outbufs[0].p;
+ 	int dirfd, fd, write_flags;
++	uint32_t ret;
+ 
+ 	// The name and environment variable must also be NULL-terminated
+ 	if (((const char *) inbufs[1].p)[inbufs[1].s - 1] != 0
+@@ -222,21 +244,9 @@ static uint32_t apps_std_fopen_with_env(void *data,
+ 	if (write_flags < 0)
+ 		return AEE_EBADPARM;
+ 
+-	if (!strcmp(inbufs[1].p, "ADSP_LIBRARY_PATH")) {
+-		dirfd = ctx->adsp_library_dirfd;
+-	} else if (!strcmp(inbufs[1].p, "ADSP_AVS_CFG_PATH")) {
+-		dirfd = ctx->adsp_avs_cfg_dirfd;
+-	} else {
+-		fprintf(stderr, "Unknown search directory %s\n",
+-				(const char *) inbufs[1].p);
+-		return AEE_EBADPARM;
+-	}
+-
+-	if (dirfd < 0) {
+-		fprintf(stderr, "Could not open virtual %s: %s\n",
+-				(const char *) inbufs[1].p, strerror(-dirfd));
+-		return AEE_EFAILED;
+-	}
++	ret = select_search_dir(ctx, inbufs[1].p, &dirfd);
++	if (ret)
++		return ret;
+ 
+ 	if (write_flags) {
+ 		fd = hexagonfs_openat_write(ctx->fds, ctx->rootfd, dirfd,
+@@ -501,6 +511,48 @@ static uint32_t apps_std_frename(void *data,
+ 	return 0;
+ }
+ 
++/*
++ * Remote processors use this to load optional libraries from a buffer that
++ * is shared with them. Mapping buffers is not supported, but the lookup
++ * fails normally if the file does not exist, which they tolerate.
++ */
++static uint32_t apps_std_fopen_with_env_fd(void *data,
++					   const struct fastrpc_io_buffer *inbufs,
++					   struct fastrpc_io_buffer *outbufs)
++{
++	struct apps_std_ctx *ctx = data;
++	const char *name = inbufs[3].p;
++	int dirfd, fd;
++	uint32_t ret;
++
++	memset(outbufs[0].p, 0, outbufs[0].s);
++
++	if (((const char *) inbufs[1].p)[inbufs[1].s - 1] != 0
++	 || ((const char *) inbufs[3].p)[inbufs[3].s - 1] != 0
++	 || ((const char *) inbufs[4].p)[inbufs[4].s - 1] != 0)
++		return AEE_EBADPARM;
++
++	if (mode_to_write_flags(inbufs[4].p) != 0)
++		return AEE_EUNSUPPORTED;
++
++	ret = select_search_dir(ctx, inbufs[1].p, &dirfd);
++	if (ret)
++		return ret;
++
++	fd = hexagonfs_openat(ctx->fds, ctx->rootfd, dirfd, name);
++	if (fd < 0) {
++		fprintf(stderr, "Could not open %s: %s\n", name, strerror(-fd));
++		return AEE_EFAILED;
++	}
++
++	hexagonfs_close(ctx->fds, fd);
++
++	fprintf(stderr, "Sharing %s with the remote processor is not supported\n",
++			name);
++
++	return AEE_EUNSUPPORTED;
++}
++
+ static const struct fastrpc_function_impl apps_std_procs[] = {
+ 	{ .def = NULL, .impl = NULL, },
+ 	{ .def = NULL, .impl = NULL, },
+@@ -569,10 +621,16 @@ static const struct fastrpc_function_impl apps_std_procs[] = {
+ 		.def = &apps_std_frename_def,
+ 		.impl = apps_std_frename,
+ 	},
++	{ .def = NULL, .impl = NULL, },
++	{ .def = NULL, .impl = NULL, },
++	{
++		.def = &apps_std_fopen_with_env_fd_def,
++		.impl = apps_std_fopen_with_env_fd,
++	},
+ };
+ 
+ const struct fastrpc_interface apps_std_interface = {
+ 	.name = "apps_std",
+-	.n_procs = 34,
++	.n_procs = 37,
+ 	.procs = apps_std_procs,
+ };
+diff --git a/hexagonrpcd/interface/apps_std.c b/hexagonrpcd/interface/apps_std.c
+index fe60fae..5b0ae6c 100644
+--- a/hexagonrpcd/interface/apps_std.c
++++ b/hexagonrpcd/interface/apps_std.c
+@@ -210,3 +210,20 @@ const struct hrpc_method_def_interp4 apps_std_frename_def = {
+ 	.n_inner_types = 0,
+ 	.inner_types = NULL,
+ };
++
++static struct hrpc_arg_def_interp4 apps_std_fopen_with_env_fd_args[] = {
++	{ HRPC_ARG_BLOB_SEQ, sizeof(char) },
++	{ HRPC_ARG_BLOB_SEQ, sizeof(char) },
++	{ HRPC_ARG_BLOB_SEQ, sizeof(char) },
++	{ HRPC_ARG_BLOB_SEQ, sizeof(char) },
++	{ HRPC_ARG_OUT_BLOB, sizeof(uint32_t) },
++	{ HRPC_ARG_OUT_BLOB, sizeof(uint32_t) },
++};
++
++const struct hrpc_method_def_interp4 apps_std_fopen_with_env_fd_def = {
++	.msg_id = 36,
++	.n_args = HRPC_ARRAY_SIZE(apps_std_fopen_with_env_fd_args),
++	.args = apps_std_fopen_with_env_fd_args,
++	.n_inner_types = 0,
++	.inner_types = NULL,
++};
+diff --git a/hexagonrpcd/interface/apps_std.h b/hexagonrpcd/interface/apps_std.h
+index 0363b62..da88957 100644
+--- a/hexagonrpcd/interface/apps_std.h
++++ b/hexagonrpcd/interface/apps_std.h
+@@ -37,5 +37,6 @@ extern struct hrpc_method_def_interp4 apps_std_readdir_def;
+ extern struct hrpc_method_def_interp4 apps_std_mkdir_def;
+ extern struct hrpc_method_def_interp4 apps_std_stat_def;
+ extern struct hrpc_method_def_interp4 apps_std_frename_def;
++extern struct hrpc_method_def_interp4 apps_std_fopen_with_env_fd_def;
+ 
+ #endif /* INTERFACE_APPS_STD_H */

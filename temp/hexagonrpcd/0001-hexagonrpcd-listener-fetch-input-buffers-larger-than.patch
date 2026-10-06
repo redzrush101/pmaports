@@ -1,0 +1,167 @@
+From b182e809672bc09674b864d8ed4b2de3407d3f5b Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Tue, 6 Oct 2026 21:20:40 +0200
+Subject: [PATCH 1/7] hexagonrpcd: listener: fetch input buffers larger than
+ 256 bytes
+
+The listener only receives the first 256 bytes of the input buffers of a
+remote call and stops if they are larger. Remote file writes on newer
+sensor frameworks exceed this size.
+
+The adsp_listener interface reports the full size of the input buffers.
+Fetch the remaining bytes with get_in_bufs2 and decode them after the
+first part. Reject sizes above 16 MiB instead of allocating them.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ hexagonrpcd/interface/adsp_listener.c | 15 +++++++
+ hexagonrpcd/interface/adsp_listener.h | 13 ++++++
+ hexagonrpcd/listener.c                | 63 +++++++++++++++++++++++++--
+ 3 files changed, 88 insertions(+), 3 deletions(-)
+
+diff --git a/hexagonrpcd/interface/adsp_listener.c b/hexagonrpcd/interface/adsp_listener.c
+index d2197df..aeaef3a 100644
+--- a/hexagonrpcd/interface/adsp_listener.c
++++ b/hexagonrpcd/interface/adsp_listener.c
+@@ -48,3 +48,18 @@ const struct hrpc_method_def_interp4 adsp_listener_next2_def = {
+ 	.n_inner_types = 0,
+ 	.inner_types = NULL,
+ };
++
++struct hrpc_arg_def_interp4 adsp_listener_get_in_bufs2_args[] = {
++	{ HRPC_ARG_WORD, sizeof(uint32_t) },
++	{ HRPC_ARG_WORD, sizeof(uint32_t) },
++	{ HRPC_ARG_OUT_BLOB, sizeof(uint32_t) },
++	{ HRPC_ARG_OUT_BLOB_SEQ, sizeof(char) },
++};
++
++const struct hrpc_method_def_interp4 adsp_listener_get_in_bufs2_def = {
++	.msg_id = 5,
++	.n_args = HRPC_ARRAY_SIZE(adsp_listener_get_in_bufs2_args),
++	.args = adsp_listener_get_in_bufs2_args,
++	.n_inner_types = 0,
++	.inner_types = NULL,
++};
+diff --git a/hexagonrpcd/interface/adsp_listener.h b/hexagonrpcd/interface/adsp_listener.h
+index 362d775..41bde6c 100644
+--- a/hexagonrpcd/interface/adsp_listener.h
++++ b/hexagonrpcd/interface/adsp_listener.h
+@@ -51,4 +51,17 @@ static inline int adsp_listener_next2(int fd,
+ 			  inbufs_size, (void *) inbufs);
+ }
+ 
++extern struct hrpc_method_def_interp4 adsp_listener_get_in_bufs2_def;
++static inline int adsp_listener_get_in_bufs2(int fd,
++					     uint32_t rctx,
++					     uint32_t offset,
++					     uint32_t *inbufs_len,
++					     uint32_t inbufs_size,
++					     char *inbufs)
++{
++	return hexagonrpc(&adsp_listener_get_in_bufs2_def, fd, ADSP_LISTENER,
++			  rctx, offset, inbufs_len,
++			  inbufs_size, (void *) inbufs);
++}
++
+ #endif /* INTERFACE_ADSP_LISTENER_H */
+diff --git a/hexagonrpcd/listener.c b/hexagonrpcd/listener.c
+index 3414974..089ff05 100644
+--- a/hexagonrpcd/listener.c
++++ b/hexagonrpcd/listener.c
+@@ -30,6 +30,16 @@
+ #include "iobuffer.h"
+ #include "listener.h"
+ 
++/*
++ * Input buffers larger than this are rejected instead of allocating memory
++ * for them. Remote file writes stay well below this size.
++ */
++#define MAX_INBUFS_LEN (16 * 1024 * 1024)
++
++#ifndef MIN
++#define MIN(a, b) ((a) < (b) ? (a) : (b))
++#endif
++
+ static int count_sizes_in_type4(const struct hrpc_inner_type_def_interp4 *type,
+ 				const struct fastrpc_io_buffer **curr_inbuf,
+ 				const struct fastrpc_io_buffer *inbufs_end,
+@@ -416,6 +426,41 @@ err:
+ 	return NULL;
+ }
+ 
++static int decode_remaining_inbufs(int fd, uint32_t rctx,
++				   struct fastrpc_decoder_context *ctx,
++				   uint32_t offset, uint32_t inbufs_len)
++{
++	uint32_t remaining = inbufs_len - offset;
++	uint32_t len_req;
++	char *buf;
++	int ret;
++
++	buf = malloc(remaining);
++	if (buf == NULL) {
++		perror("Could not allocate input buffers");
++		return -1;
++	}
++
++	ret = adsp_listener_get_in_bufs2(fd, rctx, offset,
++					 &len_req, remaining, buf);
++	if (ret) {
++		if (ret == -1)
++			perror("Could not fetch remaining input buffers");
++		else
++			fprintf(stderr, "Could not fetch remaining input buffers: %d\n", ret);
++
++		goto out;
++	}
++
++	ret = inbuf_decode(ctx, remaining, buf);
++	if (ret)
++		perror("Could not decode");
++
++out:
++	free(buf);
++	return ret;
++}
++
+ static int return_for_next_invoke(int fd,
+ 				  uint32_t result,
+ 				  uint32_t *rctx,
+@@ -457,8 +502,9 @@ static int return_for_next_invoke(int fd,
+ 		goto err_free_outbufs;
+ 	}
+ 
+-	if (inbufs_len > 256) {
+-		fprintf(stderr, "Large (>256B) input buffers aren't implemented\n");
++	if (inbufs_len > MAX_INBUFS_LEN) {
++		fprintf(stderr, "Input buffers are too large (%u bytes)\n",
++				inbufs_len);
+ 		ret = -1;
+ 		goto err_free_outbufs;
+ 	}
+@@ -470,12 +516,23 @@ static int return_for_next_invoke(int fd,
+ 		goto err_free_outbufs;
+ 	}
+ 
+-	ret = inbuf_decode(ctx, inbufs_len, inbufs);
++	ret = inbuf_decode(ctx, MIN(inbufs_len, sizeof(inbufs)), inbufs);
+ 	if (ret) {
+ 		perror("Could not decode");
+ 		goto err_free_outbufs;
+ 	}
+ 
++	/*
++	 * The first message only contains the beginning of large input
++	 * buffers. Request the remaining bytes from the remote processor.
++	 */
++	if (inbufs_len > sizeof(inbufs)) {
++		ret = decode_remaining_inbufs(fd, *rctx, ctx,
++					      sizeof(inbufs), inbufs_len);
++		if (ret)
++			goto err_free_outbufs;
++	}
++
+ 	if (!inbuf_decode_is_complete(ctx)) {
+ 		fprintf(stderr, "Expected more input buffers\n");
+ 		ret = -1;

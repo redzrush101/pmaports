@@ -1,0 +1,52 @@
+From af464d5f47d4e00dba56f3c020dc8adfbc60cec9 Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Tue, 6 Oct 2026 21:40:39 +0200
+Subject: [PATCH 7/7] data: restart the servers after resume
+
+The FastRPC servers conflict with suspend.target, so they are stopped
+before suspend, but nothing starts them again afterwards. Remote
+processors that need files later, for example to update the sensor
+registry or after a restart, then cannot reach them.
+
+Add a service that runs after resuming and starts the enabled servers.
+Starting them from a sleep hook does not work, since that would
+contradict the pending suspend.target job.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ data/hexagonrpcd-resume.service.in | 12 ++++++++++++
+ data/meson.build                   |  1 +
+ 2 files changed, 13 insertions(+)
+ create mode 100644 data/hexagonrpcd-resume.service.in
+
+diff --git a/data/hexagonrpcd-resume.service.in b/data/hexagonrpcd-resume.service.in
+new file mode 100644
+index 0000000..681d970
+--- /dev/null
++++ b/data/hexagonrpcd-resume.service.in
+@@ -0,0 +1,12 @@
++[Unit]
++Description=Restart FastRPC servers for Qualcomm DSPs after resume
++# The servers stop before suspend. Start the enabled ones again once the
++# system has resumed.
++After=suspend.target
++
++[Service]
++Type=oneshot
++ExecStart=/bin/sh -c 'for unit in hexagonrpcd-adsp-rootpd.service hexagonrpcd-adsp-sensorspd.service hexagonrpcd-sdsp.service; do systemctl -q is-enabled "$unit" && systemctl --no-block start "$unit"; done; exit 0'
++
++[Install]
++WantedBy=suspend.target
+diff --git a/data/meson.build b/data/meson.build
+index 0ad24ab..51ab506 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -1,6 +1,7 @@
+ systemd_units = [
+   'hexagonrpcd-adsp-rootpd.service',
+   'hexagonrpcd-adsp-sensorspd.service',
++  'hexagonrpcd-resume.service',
+   'hexagonrpcd-sdsp.service',
+ ]
+ 

@@ -1,0 +1,61 @@
+From 4600604c36f8df959504dd0be25b8200ea4ee80e Mon Sep 17 00:00:00 2001
+From: Yassin Rezai <yassinrsocial@proton.me>
+Date: Tue, 6 Oct 2026 21:21:14 +0200
+Subject: [PATCH 5/7] hexagonrpcd: serve the sensor configuration at /odm
+
+Some devices keep their sensor configuration in the ODM partition. The
+remote processor then reads /odm/etc/sensors/config/json.lst and fails
+to find it.
+
+Serve the sensor configuration directory at /odm/etc/sensors/config in
+addition to /vendor/etc/sensors/config.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yassin Rezai <yassinrsocial@proton.me>
+---
+ hexagonrpcd/hexagonrpcd.1  |  2 +-
+ hexagonrpcd/rpcd_builder.c | 13 ++++++++++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/hexagonrpcd/hexagonrpcd.1 b/hexagonrpcd/hexagonrpcd.1
+index 8e6a741..375c757 100644
+--- a/hexagonrpcd/hexagonrpcd.1
++++ b/hexagonrpcd/hexagonrpcd.1
+@@ -50,7 +50,7 @@ l l.
+ HexagonRPCD file/dir    Android file/dir
+ acdb                    /vendor/etc/acdbdata
+ dsp                     /vendor/dsp
+-sensors/config          /vendor/etc/sensors/config
++sensors/config          /vendor/etc/sensors/config, /odm/etc/sensors/config
+ sensors/registry        /mnt/vendor/persist/sensors/registry/registry
+ sensors/sns_reg.conf    /vendor/etc/sensors/sns_reg_config
+ socinfo                 /sys/devices/soc0
+diff --git a/hexagonrpcd/rpcd_builder.c b/hexagonrpcd/rpcd_builder.c
+index 753affc..ea73088 100644
+--- a/hexagonrpcd/rpcd_builder.c
++++ b/hexagonrpcd/rpcd_builder.c
+@@ -207,12 +207,23 @@ struct hexagonfs_dirent *construct_root_dir(const char *prefix,
+ 				)
+ 			);
+ 
+-	return hfs_mkdir("/", 6,
++	return hfs_mkdir("/", 7,
+ 			hfs_mkdir("mnt", 1,
+ 				hfs_mkdir("vendor", 1,
+ 					persist_dir
+ 				)
+ 			),
++			/*
++			 * Some devices keep their sensor configuration in the
++			 * ODM partition instead of the vendor partition.
++			 */
++			hfs_mkdir("odm", 1,
++				hfs_mkdir("etc", 1,
++					hfs_mkdir("sensors", 1,
++						hfs_map_or_empty("config", sns_cfg)
++					)
++				)
++			),
+ 			persist_dir,
+ 			hfs_mkdir("sys", 1,
+ 				hfs_mkdir("devices", 1,
