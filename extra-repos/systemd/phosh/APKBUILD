@@ -7,7 +7,7 @@ maintainer="Stefan Hansson <newbyte@postmarketos.org>"
 pkgname=phosh
 _pkgver=0.58.0
 pkgver=9999$_pkgver
-pkgrel=0
+pkgrel=1
 pkgdesc="Wayland shell for GNOME on mobile devices"
 # armhf: blocked by gnome-shell-schemas
 arch="all !armhf"
@@ -77,7 +77,9 @@ subpackages="
 	$pkgname-schemas::noarch
 	$pkgname-systemd
 	"
-source="https://sources.phosh.mobi/releases/phosh/phosh-${_pkgver/_/.}.tar.xz"
+source="https://sources.phosh.mobi/releases/phosh/phosh-${_pkgver/_/.}.tar.xz
+	0001-util-retain-valid-integer-scales.patch
+	"
 builddir="$srcdir/$pkgname-${_pkgver/_/.}"
 somask="libphoshsearch.so"
 # crossdirect disabled because the ARMv7 cross compiler crashes internally with LTO
@@ -127,4 +129,5 @@ schemas() {
 
 sha512sums="
 df60a8e161b271bf14c477d589d00759e06b003f8ed0fb21120eff9ddfd1880d9bf0b38867376b7d6d5035147d7940b7645efa60b7efc6f0a9d646fbbf03e95d  phosh-0.58.0.tar.xz
+1d37000f77a4f3591ac46a10677c62f12d1a8670d09a37bd9550e91e31b34abe946f366086c7321a07a466207762a6ca92f2aeca8312ba392a4816919da508b8  0001-util-retain-valid-integer-scales.patch
 "
