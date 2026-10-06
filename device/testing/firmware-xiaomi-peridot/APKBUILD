@@ -1,0 +1,69 @@
+# Maintainer: Yassin Rezai <yassinrsocial@proton.me>
+pkgname=firmware-xiaomi-peridot
+pkgver=20261002
+pkgrel=3
+pkgdesc="Firmware for Xiaomi POCO F6 / Redmi Turbo 3"
+subpackages="$pkgname-adreno $pkgname-audio $pkgname-iris $pkgname-sensors"
+url="https://github.com/redzrush101/firmware-xiaomi-peridot"
+arch="aarch64"
+license="proprietary"
+options="!check !strip !archcheck !tracedeps pmb:cross-native"
+_commit="d7a4ab99bdacae29573701bdb1f81474d65a2b53"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/redzrush101/firmware-xiaomi-peridot/archive/$_commit.tar.gz
+	10-adreno-firmware.files
+	"
+builddir="$srcdir/firmware-xiaomi-peridot-$_commit"
+
+package() {
+	# parent package is empty
+	mkdir -p "$pkgdir"
+}
+
+audio() {
+	pkgdesc="Xiaomi POCO F6 speaker parameters and AudioReach topology"
+	license="proprietary AND BSD-3-Clause"
+
+	install -Dm644 "$builddir"/qcom/palawan/Xiaomi-Peridot-tplg.bin \
+		-t "$subpkgdir"/usr/lib/firmware/qcom/palawan/
+	install -Dm644 "$builddir"/qcom/palawan/xiaomi/peridot/aw88261_acf.bin \
+		-t "$subpkgdir"/usr/lib/firmware/qcom/palawan/xiaomi/peridot/
+}
+
+iris() {
+	pkgdesc="Xiaomi POCO F6 Iris video firmware"
+
+	install -Dm644 "$builddir"/qcom/palawan/xiaomi/peridot/vpu30_2v.mbn \
+		-t "$subpkgdir"/usr/lib/firmware/qcom/palawan/xiaomi/peridot/
+}
+
+adreno() {
+	pkgdesc="Xiaomi POCO F6 Adreno 735 firmware"
+
+	# The zap shader is signed for the device; SQE and GMU firmware are not
+	# in linux-firmware yet.
+	install -Dm644 "$builddir"/qcom/gen71100_sqe.fw \
+		"$builddir"/qcom/gen71100_gmu.bin \
+		-t "$subpkgdir"/usr/lib/firmware/qcom/
+	install -Dm644 "$builddir"/qcom/palawan/xiaomi/peridot/gen71100_zap.mbn \
+		-t "$subpkgdir"/usr/lib/firmware/qcom/palawan/xiaomi/peridot/
+
+	# The GPU driver is built in and probes from the initramfs
+	install -Dm644 "$srcdir"/10-adreno-firmware.files \
+		-t "$subpkgdir"/usr/share/mkinitfs/files/
+}
+sensors() {
+	pkgdesc="Xiaomi POCO F6 ADSP sensor configuration"
+
+	# hexagonrpcd finds this directory from the device tree
+	local dir="$subpkgdir"/usr/share/qcom/palawan/Xiaomi/peridot
+	install -Dm644 "$builddir"/hexagonfs/sensors/config/* \
+		-t "$dir"/sensors/config/
+	install -Dm644 "$builddir"/hexagonfs/sensors/sns_reg.conf \
+		-t "$dir"/sensors/
+}
+
+sha512sums="
+28d7984d27ae60d5f2f4267cf3248feed804e19e60e196e40676d88dc28e274c355c415b7d780bcf5c14dd9b8327b943a743056d1408e91566dd40a356d6ef6a  firmware-xiaomi-peridot-d7a4ab99bdacae29573701bdb1f81474d65a2b53.tar.gz
+11b2aa4fc4ca07f25307fe3b0fed0d36ad20fd25183c36a1e2d479d4d70f879b0a8845eeb5e6a7c965959a668117a6a6a204d081ebdf64563717401509373d86  10-adreno-firmware.files
+"
