@@ -1,0 +1,20 @@
+#!/bin/sh -e
+# Copy the sensor registry with the factory calibration from the read-only
+# persist partition once. The ADSP updates the copy afterwards.
+src=/run/msm-firmware-loader/mnt/persist/sensors/registry
+persist=/var/lib/hexagonrpcd/persist
+dst=$persist/sensors/registry
+
+[ -d "$dst" ] && exit 0
+
+mkdir -p "$persist/sensors"
+tmp=$(mktemp -d "$persist/sensors/.registry.XXXXXX")
+if [ -d "$src/registry" ]; then
+	cp -R "$src/." "$tmp/"
+else
+	echo "No sensor registry on the persist partition, starting empty" >&2
+	mkdir "$tmp/registry"
+fi
+chown -R fastrpc:fastrpc "$persist"
+chmod -R u+rwX,go-rwx "$tmp"
+mv "$tmp" "$dst"

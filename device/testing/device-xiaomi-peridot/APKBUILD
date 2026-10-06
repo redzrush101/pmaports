@@ -1,0 +1,87 @@
+# Reference: <https://postmarketos.org/devicepkg>
+# Maintainer: Yassin Rezai <yassinrsocial@proton.me>
+pkgname=device-xiaomi-peridot
+pkgdesc="Xiaomi POCO F6 / Redmi Turbo 3"
+pkgver=1
+pkgrel=8
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	bootmac
+	$pkgname-ucm
+	firmware-xiaomi-peridot-adreno
+	firmware-xiaomi-peridot-audio
+	firmware-xiaomi-peridot-iris
+	firmware-xiaomi-peridot-sensors
+	hexagonrpcd>=0.5.0_git20260915
+	linux-postmarketos-qcom-palawan
+	make-dynpart-mappings
+	mkbootimg
+	msm-firmware-loader>=1.8.0-r5
+	postmarketos-base
+	soc-qcom
+	soc-qcom-qbootctl
+"
+makedepends="devicepkg-dev"
+subpackages="$pkgname-ucm::noarch"
+source="
+	81-libssc-xiaomi-peridot.rules
+	bootmac-bluetooth.conf
+	deviceinfo
+	hexagonrpcd-sensorspd.conf
+	modules-initfs
+	ucm/HiFi.conf
+	ucm/Xiaomi-Peridot.conf
+	xiaomi-peridot-sensors-registry
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+	install -Dm644 "$srcdir"/bootmac-bluetooth.conf \
+		"$pkgdir"/usr/lib/systemd/system/bootmac@bluetooth.service.d/timeout.conf
+	install -Dm644 "$srcdir"/hexagonrpcd-sensorspd.conf \
+		"$pkgdir"/usr/lib/systemd/system/hexagonrpcd-adsp-sensorspd.service.d/10-xiaomi-peridot.conf
+	install -Dm755 "$srcdir"/xiaomi-peridot-sensors-registry \
+		-t "$pkgdir"/usr/libexec/
+	install -Dm644 "$srcdir"/81-libssc-xiaomi-peridot.rules \
+		-t "$pkgdir"/usr/lib/udev/rules.d/
+	install -Dm644 "$srcdir"/HiFi.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/Xiaomi/peridot/HiFi.conf
+	install -Dm644 "$srcdir"/Xiaomi-Peridot.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/Xiaomi/peridot/Xiaomi-Peridot.conf
+	mkdir -p "$pkgdir"/usr/share/alsa/ucm2/conf.d/palawan
+	ln -s ../../Xiaomi/peridot/Xiaomi-Peridot.conf \
+		"$pkgdir"/usr/share/alsa/ucm2/conf.d/palawan/Xiaomi-Peridot.conf
+
+	# WCN6750 board data remains on the phone's read-only modem partition.
+	# msm-firmware-loader exposes its chipset directory before udev starts.
+	mkdir -p "$pkgdir"/usr/lib/firmware/ath11k/WCN6750/hw1.0
+	ln -s /run/msm-firmware-loader/target/qca6750/bdwlan.elf \
+		"$pkgdir"/usr/lib/firmware/ath11k/WCN6750/hw1.0/board.bin
+	ln -s /run/msm-firmware-loader/target/qca6750/regdb.bin \
+		"$pkgdir"/usr/lib/firmware/ath11k/WCN6750/hw1.0/regdb.bin
+}
+
+ucm() {
+	pkgdesc="ALSA UCM configuration for Xiaomi POCO F6 / Redmi Turbo 3"
+	license="BSD-3-Clause"
+	depends="alsa-ucm-conf"
+	amove usr/share/alsa
+}
+
+sha512sums="
+1d0d837ee8060a356a3888dc9beb8f4b7eb824b90a971c9fd93b94e8925353dc303c671c3daba3f03985e94acd29dd69035f86060730dd8bf26374f937340c74  81-libssc-xiaomi-peridot.rules
+9d49e5bb6d11a360525875e3bba3f76ac030e6ea27b49a4d00aca85b8bd85a9fcd763c587d35e68ed7ba0ebbc90675282afd6d393c0f8aa90af6118a5566378e  bootmac-bluetooth.conf
+1fe5373b6dcc2beab6bed93f8d549a9f4b1e309b20e9c2294ebb8838aefba43cbebc4ad77ed54cfdd39c1a2bc8fc3262e310bc3384a9f446da8b0850aede835e  deviceinfo
+014567d80367192a78dc97d15f0745ca04a7455864ff596540cf8100233bf311987ab40ec1ae1a1fe38f24e6d7cc815227e2d805ca2efeb43597f5c835f563c6  hexagonrpcd-sensorspd.conf
+f06837e40fe0d43a86e7c690bc0e11720789e2952f594c3040644d5ff75f04bbb6660a39c2cb657442da915b50b24e3da7e174563327b9f2ccec02400193000e  modules-initfs
+00c1c44aeb0c9fdb8fab3f5165f83f36d9d106a8b28f9d37fa2b22ced7c83aa8020eb40a94f00fcb01e5d84930fd76001994ae4ffdf0cddf9456a17ca97b5de1  HiFi.conf
+e9093c64ec9044adb1eb93f842c556799afb2f47f2c0b110a8b4ac5065dadd4ee324bf5f60ec1733d0a660534daebc51c57db142406ff1e917bfe1738a35ebeb  Xiaomi-Peridot.conf
+73d7257e65d5a6b7f1a9c9edf2bb8d4554d1f703f39933716e22983711819707b01e0b7b8a55eca7c103689fc4d45e82daf0fefa0f3078eebaa10e687199e638  xiaomi-peridot-sensors-registry
+"
